@@ -30,7 +30,7 @@ public class SellerSplitPage extends javax.swing.JPanel {
         initComponents();
         this.mainpage = mainpage;
 
-        // === Styling ===
+        //  Styling
         Color navBlue = new Color(6, 22, 51); // dark blue
         Color buttonBlue = new Color(33, 150, 243); // primary blue
         Font buttonFont = new Font("Segoe UI", Font.BOLD, 14);
