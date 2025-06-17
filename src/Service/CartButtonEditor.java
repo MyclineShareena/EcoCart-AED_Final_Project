@@ -64,7 +64,7 @@ public class CartButtonEditor extends DefaultCellEditor {
                 JOptionPane.showMessageDialog(button, "✅ " + productName + " added to cart!");
             }
 
-            // ✅ Refresh UI with Cart Page
+            //  Refresh UI with Cart Page
             MainJFrame mainFrame = (MainJFrame) SwingUtilities.getWindowAncestor(table);
             mainFrame.setContentPane(new CartPage(mainFrame, userId));
             mainFrame.revalidate();

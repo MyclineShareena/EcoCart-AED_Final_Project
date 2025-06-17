@@ -11,7 +11,7 @@ public class SchemaCreator {
         MongoDatabase db = MongoDBConnection.getDatabase();
 
         if (db != null) {
-            System.out.println("✅ Connected to database: " + db.getName());
+            System.out.println("Connected to database: " + db.getName());
 
             // Drop old collections if exist
             db.getCollection("enterprises").drop();
@@ -83,7 +83,7 @@ public class SchemaCreator {
                     buyerRole, sellerRole, supportSpecialistRole, auditorRole, complianceOfficerRole,
                     shippingCoordinatorRole, carbonTrackerRole, supplierAdminRole, materialTrackerRole
             ));
-            System.out.println("✅ Roles inserted");
+            System.out.println(" Roles inserted");
 
             // Insert Users
             MongoCollection<Document> userCollection = db.getCollection("users");
