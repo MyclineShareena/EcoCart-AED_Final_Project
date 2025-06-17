@@ -50,7 +50,7 @@ public class ViewProduct extends javax.swing.JPanel {
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(232, 245, 253)); // Light blue background
 
-        // === Title Panel ===
+        //Title Panel
         lblTitle = new JLabel("Seller Dashboard", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
         lblTitle.setForeground(new Color(25, 118, 210));
@@ -72,7 +72,7 @@ public class ViewProduct extends javax.swing.JPanel {
         titlePanel.add(lblTitle, BorderLayout.CENTER);
         titlePanel.add(BackBTN, BorderLayout.WEST);
 
-        // === Subtitle ===
+        //Subtitle
         lblTitleUpload = new JLabel("View & Edit Product", SwingConstants.CENTER);
         lblTitleUpload.setFont(new Font("Segoe UI", Font.BOLD, 18));
 
@@ -81,7 +81,7 @@ public class ViewProduct extends javax.swing.JPanel {
         subtitlePanel.add(lblTitleUpload, BorderLayout.CENTER);
         subtitlePanel.setBorder(new EmptyBorder(0, 0, 10, 0));
 
-        // === Table ===
+        //Table
         viewEditTbl = new JTable();
         viewEditTbl.setModel(new DefaultTableModel(new Object[][]{}, new String[]{
             "Product ID", "Name", "Category", "Description", "Materials Used", "CO2 Emission",
@@ -93,7 +93,7 @@ public class ViewProduct extends javax.swing.JPanel {
         JScrollPane scrollPane = new JScrollPane(viewEditTbl);
         scrollPane.setBorder(new EmptyBorder(0, 20, 10, 20));
 
-        // === Buttons Panel ===
+        //Buttons Panel
         BitAmount = new JButton("Bid Product");
         BitAmount.setBackground(new Color(25, 118, 210));
         BitAmount.setForeground(Color.WHITE);
@@ -334,7 +334,7 @@ public class ViewProduct extends javax.swing.JPanel {
 // Perform the update
         productsCollection.updateOne(filter, update);
 
-        javax.swing.JOptionPane.showMessageDialog(this, "✅ Bid placed successfully!");
+        javax.swing.JOptionPane.showMessageDialog(this, " Bid placed successfully!");
     }//GEN-LAST:event_BitAmountActionPerformed
 
     private void BackBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackBTNActionPerformed
