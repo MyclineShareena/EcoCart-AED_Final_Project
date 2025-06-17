@@ -59,14 +59,13 @@
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btnUpload" min="-2" pref="183" max="-2" attributes="0"/>
+                              <Component id="btnUpload" linkSize="1" min="-2" pref="183" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="LogoutBTN" linkSize="1" min="-2" pref="125" max="-2" attributes="0"/>
                                   <Component id="btnView" linkSize="1" min="-2" pref="142" max="-2" attributes="0"/>
-                                  <Component id="btnNotify" linkSize="1" alignment="1" min="-2" pref="183" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -81,9 +80,7 @@
                       <Component id="btnUpload" linkSize="2" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                       <Component id="btnView" linkSize="2" min="-2" pref="23" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="btnNotify" linkSize="2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="202" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="253" max="-2" attributes="0"/>
                       <Component id="LogoutBTN" linkSize="2" min="-2" pref="33" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="49" max="-2" attributes="0"/>
                   </Group>
@@ -107,11 +104,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnViewActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="btnNotify">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Notifications"/>
-              </Properties>
-            </Component>
             <Component class="javax.swing.JButton" name="LogoutBTN">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Logout"/>
@@ -133,7 +125,7 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
-                      <EmptySpace min="-2" pref="481" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="472" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
                               <Component id="lblTitle" min="-2" pref="361" max="-2" attributes="0"/>

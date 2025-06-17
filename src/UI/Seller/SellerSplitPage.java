@@ -49,12 +49,12 @@ public class SellerSplitPage extends javax.swing.JPanel {
         btnView.setFocusPainted(false);
         setupButtonHoverEffect(btnView);
 
-        btnNotify.setBackground(buttonBlue);
+       /*** btnNotify.setBackground(buttonBlue);
         btnNotify.setForeground(Color.WHITE);
         btnNotify.setFont(buttonFont);
         btnNotify.setFocusPainted(false);
         setupButtonHoverEffect(btnNotify);
-
+***/
         LogoutBTN.setBackground(buttonBlue);
         LogoutBTN.setForeground(Color.WHITE);
         LogoutBTN.setFont(buttonFont);
@@ -128,7 +128,6 @@ public class SellerSplitPage extends javax.swing.JPanel {
         leftpanel = new javax.swing.JPanel();
         btnUpload = new javax.swing.JButton();
         btnView = new javax.swing.JButton();
-        btnNotify = new javax.swing.JButton();
         LogoutBTN = new javax.swing.JButton();
         rightpanel = new javax.swing.JPanel();
         lblTitle = new javax.swing.JLabel();
@@ -154,8 +153,6 @@ public class SellerSplitPage extends javax.swing.JPanel {
             }
         });
 
-        btnNotify.setText("Notifications");
-
         LogoutBTN.setText("Logout");
         LogoutBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -176,12 +173,11 @@ public class SellerSplitPage extends javax.swing.JPanel {
                         .addGap(42, 42, 42)
                         .addGroup(leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnNotify, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(0, 0, 0))
         );
 
-        leftpanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {LogoutBTN, btnNotify, btnView});
+        leftpanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {LogoutBTN, btnUpload, btnView});
 
         leftpanelLayout.setVerticalGroup(
             leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -190,14 +186,12 @@ public class SellerSplitPage extends javax.swing.JPanel {
                 .addComponent(btnUpload)
                 .addGap(24, 24, 24)
                 .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnNotify)
-                .addGap(202, 202, 202)
+                .addGap(253, 253, 253)
                 .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(49, 49, 49))
         );
 
-        leftpanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {LogoutBTN, btnNotify, btnUpload, btnView});
+        leftpanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {LogoutBTN, btnUpload, btnView});
 
         SplitPane.setLeftComponent(leftpanel);
 
@@ -214,7 +208,7 @@ public class SellerSplitPage extends javax.swing.JPanel {
         rightpanelLayout.setHorizontalGroup(
             rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightpanelLayout.createSequentialGroup()
-                .addGap(481, 481, 481)
+                .addGap(472, 472, 472)
                 .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightpanelLayout.createSequentialGroup()
                         .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -271,7 +265,6 @@ public class SellerSplitPage extends javax.swing.JPanel {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton LogoutBTN;
     private javax.swing.JSplitPane SplitPane;
-    private javax.swing.JButton btnNotify;
     private javax.swing.JButton btnUpload;
     private javax.swing.JButton btnView;
     private javax.swing.JLabel jLabel1;

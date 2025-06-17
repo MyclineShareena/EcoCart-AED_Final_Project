@@ -44,7 +44,7 @@ public class UploadProduct extends javax.swing.JPanel {
         this.mainpage = mainpage;
         this.roleId = roleId;
 
-        // === Styling Variables ===
+        //Styling Variables
         Color ecoBlueBg = new Color(232, 245, 253);      // soft blue bg
         Color navBlue = new Color(6, 22, 51);            // title/nav text
         Color primaryBlue = new Color(33, 150, 243);     // button blue
@@ -55,11 +55,11 @@ public class UploadProduct extends javax.swing.JPanel {
         Font subtitleFont = new Font("Segoe UI", Font.BOLD, 18);
         Font buttonFont = new Font("Segoe UI", Font.BOLD, 16);
 
-// === Panel Styling ===
+//Panel Styling
         setBackground(ecoBlueBg);
         setLayout(new BorderLayout(10, 10));
         
-// === Title and Back Button Panel ===
+//Title and Back Button Panel
         JLabel lblMainTitle = new JLabel("Seller Dashboard", JLabel.CENTER);
         lblMainTitle.setFont(titleFont);
         lblMainTitle.setForeground(navBlue);
@@ -81,7 +81,7 @@ public class UploadProduct extends javax.swing.JPanel {
         titlePanel.add(lblTitle, BorderLayout.CENTER);
         titlePanel.add(backBtn, BorderLayout.WEST);
 
-// === Subtitle ===
+//Subtitle
         JLabel lblSubtitle = new JLabel("Upload Product", SwingConstants.CENTER);
         lblSubtitle.setFont(subtitleFont);
 
@@ -90,14 +90,14 @@ public class UploadProduct extends javax.swing.JPanel {
         subtitlePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
         subtitlePanel.add(lblSubtitle, BorderLayout.CENTER);
 
-// === Form Panel with GridBagLayout ===
+//Form Panel with GridBagLayout
         JPanel formPanel = new JPanel(new GridBagLayout());
         formPanel.setBackground(ecoBlueBg);
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(8, 8, 8, 8);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-// === Helper to Add Label + Field ===
+//Helper to Add Label + Field
         int row = 0;
 
         String[] labels = {
@@ -133,7 +133,7 @@ public class UploadProduct extends javax.swing.JPanel {
             row++;
         }
 
-// === Button Panel ===
+//Button Panel
         btnSubmit.setFont(buttonFont);
         btnSubmit.setBackground(primaryBlue);
         btnSubmit.setForeground(Color.WHITE);
@@ -145,7 +145,7 @@ public class UploadProduct extends javax.swing.JPanel {
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
         buttonPanel.add(btnSubmit);
 
-// === Final Layout Assembly ===
+//Final Layout Assembly 
         JPanel northPanel = new JPanel(new BorderLayout());
         northPanel.setBackground(getBackground());
         northPanel.add(titlePanel, BorderLayout.NORTH);
