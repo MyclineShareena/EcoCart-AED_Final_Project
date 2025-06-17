@@ -258,7 +258,7 @@ public class SellerAccountant extends javax.swing.JPanel {
 
         financials.updateOne(new Document("_id", documentId), update);
 
-        JOptionPane.showMessageDialog(this, "✅ Payment status updated!");
+        JOptionPane.showMessageDialog(this, " Payment status updated!");
 
         loadUnpaidShippingInvoices(); // Refresh table
     }//GEN-LAST:event_btnPayActionPerformed

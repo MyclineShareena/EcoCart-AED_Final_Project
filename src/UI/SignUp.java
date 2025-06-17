@@ -91,11 +91,11 @@ public class SignUp extends javax.swing.JPanel {
         btnSignup.setForeground(Color.WHITE);
         btnSignup.setFocusPainted(false);
         btnSignup.setAlignmentX(Component.LEFT_ALIGNMENT);
-        btnSignup.addActionListener(evt -> btnSignupActionPerformed(evt)); // ✅ Action listener here
+        btnSignup.addActionListener(evt -> btnSignupActionPerformed(evt)); //  Action listener here
 
         backBTN = new JButton("Back");
         backBTN.setAlignmentX(Component.LEFT_ALIGNMENT);
-        backBTN.addActionListener(evt -> backBTNActionPerformed(evt)); // ✅ Action listener here
+        backBTN.addActionListener(evt -> backBTNActionPerformed(evt)); //  Action listener here
 
         // === Add to cardPanel ===
         cardPanel.add(lblTitle);
@@ -117,7 +117,7 @@ public class SignUp extends javax.swing.JPanel {
 
         add(cardPanel);
 
-        loadRolesIntoDropdown(); // ✅ This stays last
+        loadRolesIntoDropdown(); //  This stays last
     }
 
     /**
@@ -273,7 +273,7 @@ public class SignUp extends javax.swing.JPanel {
 
                 userCollection.insertOne(newUser);
 
-                javax.swing.JOptionPane.showMessageDialog(this, "✅ User Registered Successfully!");
+                javax.swing.JOptionPane.showMessageDialog(this, " User Registered Successfully!");
 
                 // Clear fields after success
                 txtUsername.setText("");
@@ -288,7 +288,7 @@ public class SignUp extends javax.swing.JPanel {
                 javax.swing.JOptionPane.showMessageDialog(this, "❗ Selected role does not exist!");
             }
         } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "❌ Database connection failed!");
+            javax.swing.JOptionPane.showMessageDialog(this, " Database connection failed!");
         }
     }//GEN-LAST:event_btnSignupActionPerformed
 
