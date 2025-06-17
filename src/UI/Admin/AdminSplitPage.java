@@ -139,7 +139,7 @@ public class AdminSplitPage extends javax.swing.JPanel {
                 .addGap(15, 15, 15))
         );
 
-        leftpanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnReports, btnUsers});
+        leftpanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {LogoutBTN, btnReports, btnUsers});
 
         leftpanelLayout.setVerticalGroup(
             leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,7 +153,7 @@ public class AdminSplitPage extends javax.swing.JPanel {
                 .addGap(267, 267, 267))
         );
 
-        leftpanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btnReports, btnUsers});
+        leftpanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {LogoutBTN, btnReports, btnUsers});
 
         SplitPane.setLeftComponent(leftpanel);
 
