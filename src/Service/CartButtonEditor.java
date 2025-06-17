@@ -1,45 +1,34 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Service;
 
 import Model.CartItem;
 import Model.CartManager;
-import Model.CartPage;
+import UI.Buyer.CartPage;
 import UI.MainJFrame;
-import java.awt.Component;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.DefaultCellEditor;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JOptionPane;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
 
-/**
- *
- * @author Shari
- */
 public class CartButtonEditor extends DefaultCellEditor {
 
     private final JButton button;
     private final JTable table;
     private boolean clicked;
+    private final String userId;
 
-    public CartButtonEditor(JCheckBox checkBox, JTable table) {
+    public CartButtonEditor(JCheckBox checkBox, JTable table, String userId) {
         super(checkBox);
         this.table = table;
+        this.userId = userId;
         this.button = new JButton("Add to Cart");
         button.setOpaque(true);
-
         button.addActionListener(e -> fireEditingStopped());
     }
 
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value,
-            boolean isSelected, int row, int column) {
+                                                 boolean isSelected, int row, int column) {
         clicked = true;
         return button;
     }
@@ -50,8 +39,8 @@ public class CartButtonEditor extends DefaultCellEditor {
             int row = table.getSelectedRow();
             String productId = table.getValueAt(row, 0).toString();
             String productName = table.getValueAt(row, 1).toString();
-            double price = Double.parseDouble(table.getValueAt(row, 2).toString());
-            int ecoScore = Integer.parseInt(table.getValueAt(row, 3).toString());
+            double price = Double.parseDouble(table.getValueAt(row, 3).toString());
+            int ecoScore = Integer.parseInt(table.getValueAt(row, 4).toString());
 
             boolean itemExists = false;
 
@@ -65,38 +54,53 @@ public class CartButtonEditor extends DefaultCellEditor {
             }
 
             if (!itemExists) {
-                String input = JOptionPane.showInputDialog(button, "Enter quantity:", "1");
-
-                if (input == null) {
-                    // User clicked cancel or closed the dialog — do nothing
-                    return "Add to Cart";
-                }
-
-                int qty = 1;
-                try {
-                    qty = Integer.parseInt(input);
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(button, "Invalid quantity entered. Defaulting to 1.");
-                }
+                int qty = showQuantityDialog(button);
+                if (qty == -1) return "Add to Cart"; // Cancelled
 
                 List<String> productIds = new ArrayList<>();
                 productIds.add(productId);
 
                 CartManager.addToCart(new CartItem(productIds, productName, price, ecoScore, qty));
                 JOptionPane.showMessageDialog(button, "✅ " + productName + " added to cart!");
-
             }
 
-            // Refresh UI
+            // ✅ Refresh UI with Cart Page
             MainJFrame mainFrame = (MainJFrame) SwingUtilities.getWindowAncestor(table);
-            mainFrame.setContentPane(new CartPage(mainFrame));
+            mainFrame.setContentPane(new CartPage(mainFrame, userId));
             mainFrame.revalidate();
             mainFrame.repaint();
         }
 
         clicked = false;
-
         return "Add to Cart";
+    }
+
+    private int showQuantityDialog(Component parent) {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 10));
+        JLabel label = new JLabel("Enter quantity:");
+        JTextField quantityField = new JTextField("1", 5);
+        panel.add(label);
+        panel.add(quantityField);
+
+        int result = JOptionPane.showConfirmDialog(
+                parent,
+                panel,
+                "Add to Cart",
+                JOptionPane.OK_CANCEL_OPTION,
+                JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (result == JOptionPane.OK_OPTION) {
+            try {
+                int qty = Integer.parseInt(quantityField.getText().trim());
+                return (qty > 0) ? qty : 1;
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(parent, "Invalid input. Defaulting to quantity 1.");
+                return 1;
+            }
+        }
+
+        return -1; // Cancelled
     }
 
     @Override

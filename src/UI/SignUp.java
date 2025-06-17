@@ -8,6 +8,20 @@ import Repository.MongoDBConnection;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagLayout;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 import org.bson.Document;
 
 /**
@@ -22,9 +36,88 @@ public class SignUp extends javax.swing.JPanel {
      * Creates new form SignUp
      */
     public SignUp(MainJFrame mainpage) {
-        initComponents();
         this.mainpage = mainpage;
-        loadRolesIntoDropdown();
+        setBackground(new Color(13, 32, 57)); // EcoCart dark background
+        setLayout(new GridBagLayout()); // Center the card
+
+        // === Main Card Panel ===
+        JPanel cardPanel = new JPanel();
+        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+        cardPanel.setBackground(Color.WHITE);
+        cardPanel.setPreferredSize(new Dimension(360, 400));
+        cardPanel.setMaximumSize(new Dimension(360, 400));
+        cardPanel.setBorder(BorderFactory.createEmptyBorder(30, 70, 150, 70)); // padding
+
+        // === Header ===
+        JLabel lblTitle = new JLabel("EcoCart");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblTitle.setForeground(new Color(21, 101, 192));
+        lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel lblSub = new JLabel("Sign Up");
+        lblSub.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        lblSub.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // === Username ===
+        JLabel lblUsername = new JLabel("Username");
+        lblUsername.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblUsername.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        txtUsername = new JTextField();
+        txtUsername.setMaximumSize(new Dimension(250, 30));
+        txtUsername.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // === Password ===
+        JLabel lblPassword = new JLabel("Password");
+        lblPassword.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        txtPassword = new JPasswordField();
+        txtPassword.setMaximumSize(new Dimension(250, 30));
+        txtPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // === Role ===
+        JLabel lblRole = new JLabel("Select Role");
+        lblRole.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblRole.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        cmbRole = new JComboBox<>();
+        cmbRole.setMaximumSize(new Dimension(250, 30));
+        cmbRole.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // === Buttons ===
+        btnSignup = new JButton("Sign Up");
+        btnSignup.setBackground(new Color(21, 101, 192));
+        btnSignup.setForeground(Color.WHITE);
+        btnSignup.setFocusPainted(false);
+        btnSignup.setAlignmentX(Component.LEFT_ALIGNMENT);
+        btnSignup.addActionListener(evt -> btnSignupActionPerformed(evt)); // ✅ Action listener here
+
+        backBTN = new JButton("Back");
+        backBTN.setAlignmentX(Component.LEFT_ALIGNMENT);
+        backBTN.addActionListener(evt -> backBTNActionPerformed(evt)); // ✅ Action listener here
+
+        // === Add to cardPanel ===
+        cardPanel.add(lblTitle);
+        cardPanel.add(Box.createVerticalStrut(4));
+        cardPanel.add(lblSub);
+        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(lblUsername);
+        cardPanel.add(txtUsername);
+        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(lblPassword);
+        cardPanel.add(txtPassword);
+        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(lblRole);
+        cardPanel.add(cmbRole);
+        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(btnSignup);
+        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(backBTN);
+
+        add(cardPanel);
+
+        loadRolesIntoDropdown(); // ✅ This stays last
     }
 
     /**
@@ -37,108 +130,117 @@ public class SignUp extends javax.swing.JPanel {
     private void initComponents() {
 
         jSlider1 = new javax.swing.JSlider();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        usernameBox = new javax.swing.JTextPane();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        passwordBox = new javax.swing.JTextPane();
-        Submit = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        btnSignup = new javax.swing.JButton();
+        lblSignup = new javax.swing.JLabel();
+        cmbRole = new javax.swing.JComboBox<>();
         backBTN = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        lblUsername = new javax.swing.JLabel();
+        lblRole = new javax.swing.JLabel();
+        lblPassword = new javax.swing.JLabel();
+        txtUsername = new javax.swing.JTextField();
+        txtPassword = new javax.swing.JTextField();
 
-        jScrollPane1.setViewportView(usernameBox);
-
-        jScrollPane2.setViewportView(passwordBox);
-
-        Submit.setText("Sign Up");
-        Submit.addActionListener(new java.awt.event.ActionListener() {
+        btnSignup.setText("Sign Up");
+        btnSignup.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SubmitActionPerformed(evt);
+                btnSignupActionPerformed(evt);
             }
         });
 
-        jLabel1.setText("                 Sign Up");
+        lblSignup.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblSignup.setText("Sign Up");
 
-        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+        cmbRole.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jComboBox1ActionPerformed(evt);
+                cmbRoleActionPerformed(evt);
             }
         });
 
-        backBTN.setText("back");
+        backBTN.setText("Back");
         backBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 backBTNActionPerformed(evt);
             }
         });
 
-        jLabel2.setText("Username");
+        lblUsername.setText("Username");
 
-        jLabel3.setText("Role");
+        lblRole.setText("Role");
 
-        jLabel4.setText("Password");
+        lblPassword.setText("Password");
+
+        txtUsername.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtUsernameActionPerformed(evt);
+            }
+        });
+
+        txtPassword.setText("jTextField2");
+        txtPassword.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPasswordActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(194, 194, 194)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 89, Short.MAX_VALUE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(35, 35, 35)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jScrollPane1)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(101, 101, 101)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(backBTN))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(94, 94, 94)
-                        .addComponent(Submit, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(77, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(lblSignup, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(161, 161, 161)
+                        .addComponent(backBTN)
+                        .addGap(24, 24, 24))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(lblUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lblRole, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(lblPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(35, 35, 35)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(cmbRole, 0, 160, Short.MAX_VALUE)
+                                    .addComponent(txtUsername)
+                                    .addComponent(txtPassword)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(55, 55, 55)
+                                .addComponent(btnSignup, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(175, 175, 175))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1)
-                .addGap(31, 31, 31)
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(backBTN)
+                    .addComponent(lblSignup))
+                .addGap(101, 101, 101)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(lblUsername)
+                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblPassword)
+                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(cmbRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblRole))
                 .addGap(33, 33, 33)
-                .addComponent(Submit)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
-                .addComponent(backBTN)
-                .addGap(15, 15, 15))
+                .addComponent(btnSignup)
+                .addContainerGap(170, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void SubmitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SubmitActionPerformed
+    private void btnSignupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignupActionPerformed
         // TODO add your handling code here:
-        String username = usernameBox.getText().trim();
-        String password = passwordBox.getText().trim();
-        String selectedRoleName = (String) jComboBox1.getSelectedItem();  // Role selected
+        String username = txtUsername.getText().trim();
+        String password = txtPassword.getText().trim();
+        String selectedRoleName = (String) cmbRole.getSelectedItem();  // Role selected
 
         if (username.isEmpty() || password.isEmpty() || selectedRoleName == null) {
             javax.swing.JOptionPane.showMessageDialog(this, "❗ Please fill all fields and select a role!");
@@ -175,9 +277,9 @@ public class SignUp extends javax.swing.JPanel {
                 javax.swing.JOptionPane.showMessageDialog(this, "✅ User Registered Successfully!");
 
                 // Clear fields after success
-                usernameBox.setText("");
-                passwordBox.setText("");
-                jComboBox1.setSelectedIndex(0);
+                txtUsername.setText("");
+                txtPassword.setText("");
+                cmbRole.setSelectedIndex(0);
 
                 // (Optional) After success, go back to Login page
                 mainpage.dispose();
@@ -189,21 +291,30 @@ public class SignUp extends javax.swing.JPanel {
         } else {
             javax.swing.JOptionPane.showMessageDialog(this, "❌ Database connection failed!");
         }
-    }//GEN-LAST:event_SubmitActionPerformed
+    }//GEN-LAST:event_btnSignupActionPerformed
 
     private String generateUniqueUserId() {
-    return "U" + System.currentTimeMillis();  // Example: U1714398001234
-}
-    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        return "U" + System.currentTimeMillis();  // Example: U1714398001234
+    }
+    private void cmbRoleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbRoleActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox1ActionPerformed
+    }//GEN-LAST:event_cmbRoleActionPerformed
 
     private void backBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backBTNActionPerformed
         // TODO add your handling code here:
+        mainpage.role = null;
         mainpage.dispose();
-        MainJFrame loginFrame = new MainJFrame();
-        loginFrame.setVisible(true);
+        new MainJFrame().setVisible(true);
+
     }//GEN-LAST:event_backBTNActionPerformed
+
+    private void txtUsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsernameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtUsernameActionPerformed
+
+    private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPasswordActionPerformed
 
     public void loadRolesIntoDropdown() {
         MongoDatabase db = MongoDBConnection.getDatabase();
@@ -215,7 +326,7 @@ public class SignUp extends javax.swing.JPanel {
                     Document roleDoc = cursor.next();
                     String roleName = roleDoc.getString("role_name");
                     if (roleName != null) {
-                        jComboBox1.addItem(roleName);  // Add role name into dropdown
+                        cmbRole.addItem(roleName);  // Add role name into dropdown
                     }
                 }
             } catch (Exception e) {
@@ -228,17 +339,15 @@ public class SignUp extends javax.swing.JPanel {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton Submit;
     private javax.swing.JButton backBTN;
-    private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton btnSignup;
+    private javax.swing.JComboBox<String> cmbRole;
     private javax.swing.JSlider jSlider1;
-    private javax.swing.JTextPane passwordBox;
-    private javax.swing.JTextPane usernameBox;
+    private javax.swing.JLabel lblPassword;
+    private javax.swing.JLabel lblRole;
+    private javax.swing.JLabel lblSignup;
+    private javax.swing.JLabel lblUsername;
+    private javax.swing.JTextField txtPassword;
+    private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables
 }

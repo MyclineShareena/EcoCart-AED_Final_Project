@@ -5,6 +5,7 @@
 package Service;
 
 import Repository.MongoDBConnection;
+import UI.Seller.ViewProduct;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import java.awt.Component;
@@ -13,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import org.bson.Document;
 
 /**
@@ -23,10 +25,12 @@ public class AuditButtonEditor extends DefaultCellEditor {
     private JButton button;
     private JTable table;
     private boolean clicked;
+    private ViewProduct product;
 
-    public AuditButtonEditor(JCheckBox checkBox, JTable table) {
+    public AuditButtonEditor(JCheckBox checkBox, JTable table, ViewProduct product) {
         super(checkBox);
         this.table = table;
+        this.product = product;
         this.button = new JButton();
         this.button.setOpaque(true);
         this.button.addActionListener(e -> fireEditingStopped());
@@ -54,9 +58,10 @@ public class AuditButtonEditor extends DefaultCellEditor {
                 new Document("product_id", productId),
                 new Document("$set", new Document("is_audit", true))
             );
-
+            //SwingUtilities.invokeLater(() -> product.populateTable());
             JOptionPane.showMessageDialog(button, "Submitted for audit!");
-            table.setValueAt("Submitted", row, 10);
+            table.setValueAt("Submitted", row, 8);
+            SwingUtilities.invokeLater(() -> product.populateTable());
         }
         clicked = false;
         return button.getText();

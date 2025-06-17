@@ -4,20 +4,35 @@
  */
 package UI;
 
-import UI.Admin.AdminDashboard;
-import UI.Shipping.ShippingCoordinatorDashboard;
+import UI.Admin.ManageUsers;
+import UI.ShippingCoordinator.ShippingCoordinatorDashboard;
 import UI.ProdAuditor.ProductAuditorDashboard;
 import UI.Buyer.BuyerSplitPage;
 import UI.Seller.SellerSplitPage;
 import Repository.MongoDBConnection;
 import Repository.SchemaCreator;
 import UI.Auditor.AuditorDashboard;
-import UI.Seller.SellerAccountant;
-import UI.Shipping.ShippingAccountantDashboard;
+import UI.Customersupport.SupportPage;
+import UI.Accountant.SellerAccountant;
+import UI.Accountant.ShippingAccountantDashboard;
+import UI.Admin.AdminSplitPage;
 import com.mongodb.client.MongoCollection;
 
 import com.mongodb.client.MongoDatabase;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.GridLayout;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import org.bson.Document;
 
 /**
@@ -35,10 +50,73 @@ public class MainJFrame extends javax.swing.JFrame {
     public String enterpriseName = null;
     public String organizationName = null;
     public String userId = null;
-    
+
     public MainJFrame() {
         initComponents();
+        setTitle("EcoCart Login");
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // Maximize window
+        setLocationRelativeTo(null);
+        setResizable(true);
 
+        // Left background image covering half screen
+        Mainpic.setIcon(new ImageIcon(getClass().getResource("/Images/Mainframe2.png")));
+        Mainpic.setHorizontalAlignment(SwingConstants.CENTER);
+        Mainpic.setVerticalAlignment(SwingConstants.CENTER);
+
+        // Right panel styling
+        rightpanel.setBackground(new Color(255,255,255 ));
+        rightpanel.setLayout(null); // Absolute positioning
+
+        // EcoCart Logo
+        ImgLogo.setIcon(new ImageIcon(getClass().getResource("/Images/logo.png")));
+        ImgLogo.setBounds(320, 70, 100, 50); // adjust size as needed
+        rightpanel.add(ImgLogo);
+
+        // "EcoCart" title
+        lblTitle.setText("EcoCart");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblTitle.setBounds(360, 80, 100, 30);
+        rightpanel.add(lblTitle);
+
+        // Login heading
+        lbllogin.setText("Log In");
+        lbllogin.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lbllogin.setBounds(370, 130, 100, 30);
+        rightpanel.add(lbllogin);
+
+        // Username
+        lblUsername.setText("Username");
+        lblUsername.setBounds(250, 200, 100, 25);
+        txtUsername.setBounds(250, 225, 300, 35);
+        rightpanel.add(lblUsername);
+        rightpanel.add(txtUsername);
+
+        // Password
+        lblPassword.setText("Password");
+        lblPassword.setBounds(250, 275, 100, 25);
+        txtPassword.setBounds(250, 300, 300, 35);
+        rightpanel.add(lblPassword);
+        rightpanel.add(txtPassword);
+
+        // Login button
+        loginBTN.setText("Log In");
+        loginBTN.setBounds(250, 350, 300, 40);
+        loginBTN.setBackground(new Color(100, 150, 200));
+        loginBTN.setForeground(Color.WHITE);
+        loginBTN.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        loginBTN.setFocusPainted(false);
+        rightpanel.add(loginBTN);
+
+        // Sign up button
+        signupBTN.setText("Sign Up");
+        signupBTN.setBounds(250, 400, 300, 40);
+        signupBTN.setBackground(Color.LIGHT_GRAY);
+        signupBTN.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        signupBTN.setFocusPainted(false);
+        rightpanel.add(signupBTN);
+        
+        SplitPane.setDividerSize(0);
+        SplitPane.setBorder(BorderFactory.createEmptyBorder());
     }
 
     /**
@@ -50,39 +128,52 @@ public class MainJFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jSplitPane1 = new javax.swing.JSplitPane();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        SplitPane = new javax.swing.JSplitPane();
+        leftpanel = new javax.swing.JPanel();
+        Mainpic = new javax.swing.JLabel();
+        rightpanel = new javax.swing.JPanel();
         lblUsername = new javax.swing.JLabel();
         lblPassword = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
         txtPassword = new javax.swing.JPasswordField();
         loginBTN = new javax.swing.JButton();
         signupBTN = new javax.swing.JButton();
+        ImgLogo = new javax.swing.JLabel();
+        lblTitle = new javax.swing.JLabel();
+        lbllogin = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setMaximumSize(new java.awt.Dimension(700, 400));
-        jPanel1.setPreferredSize(new java.awt.Dimension(700, 400));
+        SplitPane.setMaximumSize(new java.awt.Dimension(1500, 800));
+        SplitPane.setPreferredSize(new java.awt.Dimension(1500, 800));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Mainframe.png"))); // NOI18N
+        leftpanel.setMaximumSize(new java.awt.Dimension(700, 400));
+        leftpanel.setPreferredSize(new java.awt.Dimension(600, 600));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+        Mainpic.setBackground(new java.awt.Color(255, 255, 255));
+        Mainpic.setForeground(new java.awt.Color(255, 255, 255));
+        Mainpic.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Mainframe2.png"))); // NOI18N
+        Mainpic.setPreferredSize(new java.awt.Dimension(600, 1100));
+
+        javax.swing.GroupLayout leftpanelLayout = new javax.swing.GroupLayout(leftpanel);
+        leftpanel.setLayout(leftpanelLayout);
+        leftpanelLayout.setHorizontalGroup(
+            leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(Mainpic, javax.swing.GroupLayout.PREFERRED_SIZE, 757, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        leftpanelLayout.setVerticalGroup(
+            leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftpanelLayout.createSequentialGroup()
+                .addGap(0, 0, 0)
+                .addComponent(Mainpic, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
 
-        jSplitPane1.setLeftComponent(jPanel1);
+        SplitPane.setLeftComponent(leftpanel);
+
+        rightpanel.setBackground(new java.awt.Color(255, 255, 255));
+        rightpanel.setMaximumSize(new java.awt.Dimension(1500, 800));
+        rightpanel.setPreferredSize(new java.awt.Dimension(600, 600));
 
         lblUsername.setText("Username");
 
@@ -108,39 +199,63 @@ public class MainJFrame extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(116, 116, 116)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(lblUsername, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
-                    .addComponent(lblPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(39, 39, 39)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(66, 66, 66))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+        ImgLogo.setBackground(new java.awt.Color(255, 255, 255));
+        ImgLogo.setForeground(new java.awt.Color(255, 255, 255));
+        ImgLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/logo.png"))); // NOI18N
+
+        lblTitle.setForeground(new java.awt.Color(0, 51, 51));
+
+        lbllogin.setForeground(new java.awt.Color(0, 51, 51));
+
+        javax.swing.GroupLayout rightpanelLayout = new javax.swing.GroupLayout(rightpanel);
+        rightpanel.setLayout(rightpanelLayout);
+        rightpanelLayout.setHorizontalGroup(
+            rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightpanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightpanelLayout.createSequentialGroup()
                         .addComponent(signupBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(147, 147, 147))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightpanelLayout.createSequentialGroup()
                         .addComponent(loginBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(113, 113, 113))))
+            .addGroup(rightpanelLayout.createSequentialGroup()
+                .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(rightpanelLayout.createSequentialGroup()
+                        .addGap(116, 116, 116)
+                        .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(lblUsername, javax.swing.GroupLayout.DEFAULT_SIZE, 84, Short.MAX_VALUE)
+                            .addComponent(lblPassword, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(39, 39, 39)
+                        .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(rightpanelLayout.createSequentialGroup()
+                        .addGap(48, 48, 48)
+                        .addComponent(ImgLogo)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(rightpanelLayout.createSequentialGroup()
+                        .addGap(132, 132, 132)
+                        .addComponent(lbllogin)))
+                .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(156, 156, 156)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+        rightpanelLayout.setVerticalGroup(
+            rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(rightpanelLayout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(ImgLogo)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(lbllogin)
+                .addGap(35, 35, 35)
+                .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblUsername)
                     .addComponent(txtUsername, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblPassword)
                     .addComponent(txtPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(33, 33, 33)
@@ -150,17 +265,17 @@ public class MainJFrame extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jSplitPane1.setRightComponent(jPanel2);
+        SplitPane.setRightComponent(rightpanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1400, Short.MAX_VALUE)
+            .addComponent(SplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+            .addComponent(SplitPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -219,7 +334,7 @@ public class MainJFrame extends javax.swing.JFrame {
                 // Redirect based on role
                 switch (role.toLowerCase()) {
                     case "buyer":
-                        BuyerSplitPage buyerPanel = new BuyerSplitPage(this);
+                        BuyerSplitPage buyerPanel = new BuyerSplitPage(this, userId);
                         this.setContentPane(buyerPanel);
                         break;
 
@@ -227,7 +342,7 @@ public class MainJFrame extends javax.swing.JFrame {
                         SellerSplitPage sellerPanel = new SellerSplitPage(this);
                         this.setContentPane(sellerPanel);
                         break;
-                        
+
                     case "auditor":
                         AuditorDashboard auditorPanel = new AuditorDashboard(this);
                         this.setContentPane(auditorPanel);
@@ -242,19 +357,24 @@ public class MainJFrame extends javax.swing.JFrame {
                         ShippingCoordinatorDashboard shippingPanel = new ShippingCoordinatorDashboard(this);
                         this.setContentPane(shippingPanel);
                         break;
-                    
+
                     case "shipping accounts":
                         ShippingAccountantDashboard shippingManager = new ShippingAccountantDashboard(this);
                         this.setContentPane(shippingManager);
                         break;
-                       
+
                     case "seller accountant":
                         SellerAccountant sellerAccountant = new SellerAccountant(this);
                         this.setContentPane(sellerAccountant);
                         break;
 
+                    case "support specialist":
+                        SupportPage support_spe = new SupportPage(this, userId);
+                        this.setContentPane(support_spe);
+                        break;
+
                     case "admin":
-                        AdminDashboard adminPanel = new AdminDashboard(this);
+                        AdminSplitPage adminPanel = new AdminSplitPage(this);
                         this.setContentPane(adminPanel);
                         break;
 
@@ -324,13 +444,16 @@ public class MainJFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JLabel ImgLogo;
+    private javax.swing.JLabel Mainpic;
+    private javax.swing.JSplitPane SplitPane;
     private javax.swing.JLabel lblPassword;
+    private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblUsername;
+    private javax.swing.JLabel lbllogin;
+    private javax.swing.JPanel leftpanel;
     private javax.swing.JButton loginBTN;
+    private javax.swing.JPanel rightpanel;
     private javax.swing.JButton signupBTN;
     private javax.swing.JPasswordField txtPassword;
     private javax.swing.JTextField txtUsername;

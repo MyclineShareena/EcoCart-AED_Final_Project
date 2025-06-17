@@ -7,21 +7,102 @@ package UI.Buyer;
 import UI.MainJFrame;
 import UI.Seller.UploadProduct;
 import UI.Seller.ViewProduct;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Image;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 /**
  *
  * @author Shari
  */
 public class BuyerSplitPage extends javax.swing.JPanel {
-    
-    MainJFrame mainpage;
 
-    /**
-     * Creates new form BuyerDashboard
-     */
-    public BuyerSplitPage(MainJFrame mainpage) {
-        initComponents();
+    private MainJFrame mainpage;
+    private String userId;
+
+    public BuyerSplitPage(MainJFrame mainpage, String userId) {
         this.mainpage = mainpage;
+        this.userId = userId;
+        initComponents();
+
+        // === Styling ===
+        Color darkGreen = new Color(0, 77, 64);
+        Color hoverGreen = new Color(38, 166, 91);
+        Font buttonFont = new Font("Segoe UI", Font.BOLD, 14);
+
+        leftpanel.setBackground(darkGreen);
+
+        JButton[] buttons = {btnProducts, btnOrders, raiseComplain, LogoutBTN};
+        for (JButton btn : buttons) {
+            btn.setBackground(darkGreen);
+            btn.setForeground(Color.WHITE);
+            btn.setFont(buttonFont);
+            btn.setFocusPainted(false);
+            btn.setBorder(BorderFactory.createLineBorder(darkGreen.darker()));
+        }
+
+        rightpanel.setLayout(new BorderLayout());
+        rightpanel.setBackground(Color.WHITE);
+
+// Remove old layout components from rightpanel
+        rightpanel.removeAll();
+
+// Add the title to the top
+        lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblTitle.setForeground(new Color(0, 77, 64));
+        rightpanel.add(lblTitle, BorderLayout.NORTH);
+
+// Center the image
+        jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
+        rightpanel.add(jLabel1, BorderLayout.CENTER);
+
+        SplitPane.setDividerSize(0);
+        SplitPane.setBorder(BorderFactory.createEmptyBorder());
+    }
+
+    private void setupButtonHoverEffect(JButton button) {
+        Color originalBg = new Color(0, 77, 64);  // Soft leafy green #A8D5BA
+        Color originalFg = Color.WHITE;
+
+        Color hoverBg = new Color(38, 166, 91);     // Lighter mint #D1EFE0
+        Color hoverFg = Color.WHITE;
+
+        Border originalBorder = BorderFactory.createLineBorder(originalBg.darker());
+        Border hoverBorder = BorderFactory.createLineBorder(hoverBg.darker());
+
+        button.setBackground(originalBg);
+        button.setForeground(originalFg);
+        button.setBorder(originalBorder);
+        button.setFocusPainted(false);
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(hoverBg);
+                button.setForeground(hoverFg);
+                button.setBorder(hoverBorder);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(originalBg);
+                button.setForeground(originalFg);
+                button.setBorder(originalBorder);
+            }
+        });
     }
 
     /**
@@ -37,13 +118,18 @@ public class BuyerSplitPage extends javax.swing.JPanel {
         leftpanel = new javax.swing.JPanel();
         btnProducts = new javax.swing.JButton();
         btnOrders = new javax.swing.JButton();
+        raiseComplain = new javax.swing.JButton();
+        LogoutBTN = new javax.swing.JButton();
         rightpanel = new javax.swing.JPanel();
         lblTitle = new javax.swing.JLabel();
-        LogoutBTN = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
-        SplitPane.setPreferredSize(new java.awt.Dimension(1000, 600));
+        setMaximumSize(new java.awt.Dimension(120000000, 120000000));
+        setPreferredSize(new java.awt.Dimension(2000, 1100));
 
-        leftpanel.setPreferredSize(new java.awt.Dimension(190, 514));
+        SplitPane.setPreferredSize(new java.awt.Dimension(2000, 800));
+
+        leftpanel.setPreferredSize(new java.awt.Dimension(250, 800));
 
         btnProducts.setText("Products");
         btnProducts.addActionListener(new java.awt.event.ActionListener() {
@@ -59,31 +145,12 @@ public class BuyerSplitPage extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout leftpanelLayout = new javax.swing.GroupLayout(leftpanel);
-        leftpanel.setLayout(leftpanelLayout);
-        leftpanelLayout.setHorizontalGroup(
-            leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(leftpanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnProducts, javax.swing.GroupLayout.DEFAULT_SIZE, 167, Short.MAX_VALUE)
-                    .addComponent(btnOrders, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 0, 0))
-        );
-        leftpanelLayout.setVerticalGroup(
-            leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(leftpanelLayout.createSequentialGroup()
-                .addGap(172, 172, 172)
-                .addComponent(btnProducts)
-                .addGap(18, 18, 18)
-                .addComponent(btnOrders, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(246, 246, 246))
-        );
-
-        SplitPane.setLeftComponent(leftpanel);
-
-        lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        lblTitle.setText("Buyer Dashboard");
+        raiseComplain.setText("Raise a Issue");
+        raiseComplain.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                raiseComplainActionPerformed(evt);
+            }
+        });
 
         LogoutBTN.setText("Logout");
         LogoutBTN.addActionListener(new java.awt.event.ActionListener() {
@@ -92,25 +159,72 @@ public class BuyerSplitPage extends javax.swing.JPanel {
             }
         });
 
+        javax.swing.GroupLayout leftpanelLayout = new javax.swing.GroupLayout(leftpanel);
+        leftpanel.setLayout(leftpanelLayout);
+        leftpanelLayout.setHorizontalGroup(
+            leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, leftpanelLayout.createSequentialGroup()
+                .addGap(36, 36, 36)
+                .addGroup(leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnOrders, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnProducts, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(raiseComplain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(15, 15, 15))
+        );
+
+        leftpanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {LogoutBTN, btnOrders, btnProducts, raiseComplain});
+
+        leftpanelLayout.setVerticalGroup(
+            leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftpanelLayout.createSequentialGroup()
+                .addGap(172, 172, 172)
+                .addComponent(btnProducts)
+                .addGap(26, 26, 26)
+                .addComponent(btnOrders, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addComponent(raiseComplain)
+                .addGap(190, 190, 190)
+                .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(267, 267, 267))
+        );
+
+        leftpanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {LogoutBTN, btnOrders, btnProducts, raiseComplain});
+
+        SplitPane.setLeftComponent(leftpanel);
+
+        rightpanel.setPreferredSize(new java.awt.Dimension(2000, 800));
+
+        lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTitle.setText("Buyer Dashboard");
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Environmenta.png"))); // NOI18N
+        jLabel1.setPreferredSize(null);
+
         javax.swing.GroupLayout rightpanelLayout = new javax.swing.GroupLayout(rightpanel);
         rightpanel.setLayout(rightpanelLayout);
         rightpanelLayout.setHorizontalGroup(
             rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightpanelLayout.createSequentialGroup()
-                .addGap(176, 176, 176)
-                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(110, 110, 110)
-                .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33))
+                .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(rightpanelLayout.createSequentialGroup()
+                        .addGap(347, 347, 347)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 775, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(rightpanelLayout.createSequentialGroup()
+                        .addGap(499, 499, 499)
+                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         rightpanelLayout.setVerticalGroup(
             rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightpanelLayout.createSequentialGroup()
-                .addGap(13, 13, 13)
-                .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(81, 81, 81))
+                .addGap(36, 36, 36)
+                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(215, 215, 215)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         SplitPane.setRightComponent(rightpanel);
@@ -119,25 +233,35 @@ public class BuyerSplitPage extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(SplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 2000, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
+            .addComponent(SplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1100, Short.MAX_VALUE)
         );
+
+        getAccessibleContext().setAccessibleDescription("");
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnProductsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductsActionPerformed
         // TODO add your handling code here:
-        Products ps = new Products(mainpage);
+        Products ps = new Products(mainpage, userId);
         SplitPane.setRightComponent(ps);
     }//GEN-LAST:event_btnProductsActionPerformed
 
     private void btnOrdersActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdersActionPerformed
         // TODO add your handling code here:
-        Orders or = new Orders(mainpage);
+        Orders or = new Orders(mainpage, userId);
         SplitPane.setRightComponent(or);
     }//GEN-LAST:event_btnOrdersActionPerformed
+
+    private void raiseComplainActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_raiseComplainActionPerformed
+        // TODO add your handling code here:
+        RaiseIssue rs = new RaiseIssue(mainpage, userId);
+        SplitPane.setRightComponent(rs);
+    }//GEN-LAST:event_raiseComplainActionPerformed
 
     private void LogoutBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LogoutBTNActionPerformed
         // TODO add your handling code here:
@@ -152,8 +276,10 @@ public class BuyerSplitPage extends javax.swing.JPanel {
     private javax.swing.JSplitPane SplitPane;
     private javax.swing.JButton btnOrders;
     private javax.swing.JButton btnProducts;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JPanel leftpanel;
+    private javax.swing.JButton raiseComplain;
     private javax.swing.JPanel rightpanel;
     // End of variables declaration//GEN-END:variables
 }

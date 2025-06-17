@@ -20,8 +20,10 @@ public class Product {
     private String carbon;
     private Double price;
     private String category;
+    private boolean is_audit;
 
-    public Product(String productId, String productName, String description, String sellerId, String certifierId, String shippingProviderId, String materialsUsed, String carbon, Double price, String category, int ecoscore) {
+
+    public Product(String productId, String productName, String description, String sellerId, String certifierId, String shippingProviderId, String materialsUsed, String carbon, Double price, String category, int ecoscore, boolean is_audit) {
         this.productId = productId;
         this.productName = productName;
         this.description = description;
@@ -33,6 +35,7 @@ public class Product {
         this.price = price;
         this.category = category;
         this.ecoscore = ecoscore;
+        this.is_audit = is_audit;
     }
 
     public void setCategory(String category) {
@@ -71,6 +74,14 @@ public class Product {
     private int ecoscore;
 
     public Product() {
+    }
+    
+     public void setIs_audit(boolean is_audit) {
+        this.is_audit = is_audit;
+    }
+
+    public boolean isIs_audit() {
+        return is_audit;
     }
 
     public Product(String productId, String productName, String description, String sellerId, String certifierId, String shippingProviderId, int ecoscore) {

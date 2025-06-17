@@ -12,8 +12,23 @@ import UI.MainJFrame;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import org.bson.Document;
 
 /**
@@ -32,17 +47,107 @@ public class ViewProduct extends javax.swing.JPanel {
         initComponents();
         this.mainpage = mainpage;
         this.roleId = roleId;
-        viewEditTbl.setModel(new javax.swing.table.DefaultTableModel(
-                new Object[][]{},
-                new String[]{
-                    "Product ID", "Name", "catagory", "Description", "Materials Used", "CO2 Emission",
-                    "Eco Score", "Certifier ID", "Shipping ID", "Action", "Submit Audit"
-                }
-        ));
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(232, 245, 253)); // Light blue background
+
+        // === Title Panel ===
+        lblTitle = new JLabel("Seller Dashboard", SwingConstants.CENTER);
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        lblTitle.setForeground(new Color(25, 118, 210));
+
+        BackBTN = new JButton("Back");
+        BackBTN.setBackground(new Color(25, 118, 210));
+        BackBTN.setForeground(Color.WHITE);
+        BackBTN.setFocusPainted(false);
+        BackBTN.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        BackBTN.addActionListener(e -> {
+            mainpage.setContentPane(new SellerSplitPage(mainpage));
+            mainpage.revalidate();
+            mainpage.repaint();
+        });
+
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.setBackground(getBackground());
+        titlePanel.setBorder(new EmptyBorder(10, 20, 0, 20));
+        titlePanel.add(lblTitle, BorderLayout.CENTER);
+        titlePanel.add(BackBTN, BorderLayout.WEST);
+
+        // === Subtitle ===
+        lblTitleUpload = new JLabel("View & Edit Product", SwingConstants.CENTER);
+        lblTitleUpload.setFont(new Font("Segoe UI", Font.BOLD, 18));
+
+        JPanel subtitlePanel = new JPanel(new BorderLayout());
+        subtitlePanel.setBackground(getBackground());
+        subtitlePanel.add(lblTitleUpload, BorderLayout.CENTER);
+        subtitlePanel.setBorder(new EmptyBorder(0, 0, 10, 0));
+
+        // === Table ===
+        viewEditTbl = new JTable();
+        viewEditTbl.setModel(new DefaultTableModel(new Object[][]{}, new String[]{
+            "Product ID", "Name", "Category", "Description", "Materials Used", "CO2 Emission",
+            "Eco Score", "Action", "Submit Audit"
+        }));
+
+        styleTable(viewEditTbl);
+
+        JScrollPane scrollPane = new JScrollPane(viewEditTbl);
+        scrollPane.setBorder(new EmptyBorder(0, 20, 10, 20));
+
+        // === Buttons Panel ===
+        BitAmount = new JButton("Bid Product");
+        BitAmount.setBackground(new Color(25, 118, 210));
+        BitAmount.setForeground(Color.WHITE);
+        BitAmount.setFocusPainted(false);
+        BitAmount.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        BitAmount.addActionListener(this::BitAmountActionPerformed);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        buttonPanel.setBackground(getBackground());
+        buttonPanel.add(BitAmount);
+        buttonPanel.setBorder(new EmptyBorder(5, 20, 15, 0));
+
+        JPanel northPanel = new JPanel(new BorderLayout());
+        northPanel.setBackground(getBackground());
+        northPanel.add(titlePanel, BorderLayout.NORTH);
+        northPanel.add(subtitlePanel, BorderLayout.SOUTH);
+
+        add(northPanel, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.SOUTH);
+
         populateTable();
     }
 
-    private void populateTable() {
+    private void styleTable(JTable table) {
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(new Color(187, 222, 251));
+        header.setForeground(new Color(25, 118, 210));
+        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        table.setRowHeight(25);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        table.setGridColor(new Color(200, 200, 200));
+        table.setSelectionBackground(new Color(144, 202, 249));
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.setFillsViewportHeight(true);
+
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+            final Color evenRow = new Color(232, 245, 253);
+            final Color oddRow = Color.WHITE;
+
+            public Component getTableCellRendererComponent(JTable tbl, Object val, boolean sel, boolean foc, int row, int col) {
+                Component c = super.getTableCellRendererComponent(tbl, val, sel, foc, row, col);
+                c.setBackground(!sel ? (row % 2 == 0 ? evenRow : oddRow) : new Color(144, 202, 249));
+                return c;
+            }
+        };
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+        }
+    }
+
+    public void populateTable() {
         DefaultTableModel model = (DefaultTableModel) viewEditTbl.getModel();
         model.setRowCount(0); // Clear existing rows
 
@@ -56,7 +161,8 @@ public class ViewProduct extends javax.swing.JPanel {
 
             for (Document doc : products) {
                 boolean isAudit = doc.getBoolean("is_audit", false);
-                String auditButtonLabel = !isAudit ? "Submit for Audit" : "Submitted";
+                //int ecoScore = doc.get("ecoscore", 0);
+                String auditButtonLabel = !isAudit  ? "Submit for Audit" : "Submitted";
                 Object[] row = new Object[]{
                     doc.getString("product_id"),
                     doc.getString("product_name"),
@@ -65,20 +171,20 @@ public class ViewProduct extends javax.swing.JPanel {
                     doc.getString("materials_used"),
                     doc.getInteger("carbon_score"),
                     doc.get("ecoscore", 0),
-                    doc.getString("certifier_id"),
-                    doc.getString("shipping_provider_id"),
+                    //doc.getString("certifier_id"),
+                    //doc.getString("shipping_provider_id"),
                     "Update",
                     auditButtonLabel
 
                 };
                 model.addRow(row);
             }
-            viewEditTbl.getColumnModel().getColumn(9).setCellRenderer(new ButtonRenderer());
-            viewEditTbl.getColumnModel().getColumn(9).setCellEditor(new ButtonEditor(new JCheckBox(), viewEditTbl));
+            viewEditTbl.getColumnModel().getColumn(7).setCellRenderer(new ButtonRenderer());
+            viewEditTbl.getColumnModel().getColumn(7).setCellEditor(new ButtonEditor(new JCheckBox(), viewEditTbl));
 
-            viewEditTbl.getColumnModel().getColumn(10).setCellRenderer(new ButtonRenderer());
-            viewEditTbl.getColumnModel().getColumn(10).setCellEditor(new AuditButtonEditor(new JCheckBox(), viewEditTbl));
-
+            viewEditTbl.getColumnModel().getColumn(8).setCellRenderer(new ButtonRenderer());
+            viewEditTbl.getColumnModel().getColumn(8).setCellEditor(new AuditButtonEditor(new JCheckBox(), viewEditTbl, this));
+            
         }
     }
 
@@ -152,7 +258,7 @@ public class ViewProduct extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(BitAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -161,7 +267,7 @@ public class ViewProduct extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(268, 268, 268)
                         .addComponent(lblTitleUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 190, Short.MAX_VALUE)
+                .addGap(190, 190, 190)
                 .addComponent(BackBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(98, 98, 98))
         );
@@ -179,7 +285,7 @@ public class ViewProduct extends javax.swing.JPanel {
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(36, 36, 36)
                 .addComponent(BitAmount, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(157, 157, 157))
         );
     }// </editor-fold>//GEN-END:initComponents
 

@@ -7,7 +7,23 @@ package UI.ProdAuditor;
 import UI.MainJFrame;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import org.bson.Document;
 
 /**
@@ -24,7 +40,108 @@ public class ProductAuditorDashboard extends javax.swing.JPanel {
     public ProductAuditorDashboard(MainJFrame mainpage) {
         initComponents();
         this.mainpage = mainpage;
+        
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(232, 245, 255)); // light blue background
+
+        // === Title Panel ===
+        JLabel title = new JLabel("Product Auditor", SwingConstants.CENTER);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        title.setForeground(new Color(0, 70, 140)); // blue
+
+        JButton btnLogout = new JButton("Logout");
+        btnLogout.setBackground(new Color(0, 70, 140));
+        btnLogout.setForeground(Color.WHITE);
+        btnLogout.setFocusPainted(false);
+        btnLogout.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
+        btnLogout.addActionListener(e -> {
+            mainpage.role = null;
+            mainpage.dispose();
+            new MainJFrame().setVisible(true);
+        });
+
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.setBackground(getBackground());
+        titlePanel.setBorder(new EmptyBorder(10, 20, 0, 20));
+        titlePanel.add(title, BorderLayout.CENTER);
+        titlePanel.add(btnLogout, BorderLayout.WEST);
+
+        // === Subtitle Panel ===
+        JLabel subtitle = new JLabel("Review & Approve Bid Amount", SwingConstants.CENTER);
+        subtitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+
+        JPanel subtitlePanel = new JPanel(new BorderLayout());
+        subtitlePanel.setBackground(getBackground());
+        subtitlePanel.add(subtitle, BorderLayout.CENTER);
+        subtitlePanel.setBorder(new EmptyBorder(0, 0, 10, 0));
+
+        // === Table ===
+        viewEditTbl = new JTable(new DefaultTableModel(new Object[][]{}, new String[]{
+            "Seller ID", "Product Name", "Description", "Category", "Bid Amount"
+        }));
+        styleTable(viewEditTbl);
+
+        JScrollPane scrollPane = new JScrollPane(viewEditTbl);
+        scrollPane.setBorder(new EmptyBorder(0, 20, 20, 20));
+
+        // === Buttons ===
+        JButton btnApprove = new JButton("Approve");
+        btnApprove.setBackground(new Color(0, 70, 140));
+        btnApprove.setForeground(Color.WHITE);
+        btnApprove.setFocusPainted(false);
+        btnApprove.addActionListener(this::btnApproveActionPerformed);
+
+        JButton btnReject = new JButton("Reject");
+        btnReject.setBackground(new Color(0, 70, 140));
+        btnReject.setForeground(Color.WHITE);
+        btnReject.setFocusPainted(false);
+        btnReject.addActionListener(this::btnRejectActionPerformed);
+
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        btnPanel.setBackground(getBackground());
+        btnPanel.setBorder(new EmptyBorder(10, 0, 20, 0));
+        btnPanel.add(btnApprove);
+        btnPanel.add(Box.createHorizontalStrut(20));
+        btnPanel.add(btnReject);
+
+        // Add components to main layout
+        JPanel northPanel = new JPanel(new BorderLayout());
+        northPanel.setBackground(getBackground());
+        northPanel.add(titlePanel, BorderLayout.NORTH);
+        northPanel.add(subtitlePanel, BorderLayout.SOUTH);
+
+        add(northPanel, BorderLayout.NORTH);
+        add(scrollPane, BorderLayout.CENTER);
+        add(btnPanel, BorderLayout.SOUTH);
+
         populateBidTable();
+    }
+
+    private void styleTable(JTable table) {
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(new Color(179, 229, 252));
+        header.setForeground(new Color(0, 70, 140));
+        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+
+        table.setRowHeight(25);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        table.setGridColor(new Color(180, 220, 240));
+        table.setSelectionBackground(new Color(200, 230, 255));
+
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+            final Color evenRow = new Color(232, 245, 255);
+            final Color oddRow = Color.WHITE;
+
+            public Component getTableCellRendererComponent(JTable tbl, Object val, boolean sel, boolean foc, int row, int col) {
+                Component c = super.getTableCellRendererComponent(tbl, val, sel, foc, row, col);
+                c.setBackground(!sel ? (row % 2 == 0 ? evenRow : oddRow) : new Color(200, 230, 255));
+                return c;
+            }
+        };
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+        }
     }
 
     /**
@@ -92,49 +209,46 @@ public class ProductAuditorDashboard extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(369, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblTitleReview, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(323, 323, 323))
+            .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnApprove, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(33, 33, 33)
-                        .addComponent(btnReject, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(16, 16, 16))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(13, 13, 13)
+                        .addGap(38, 38, 38)
+                        .addComponent(btnReject, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(142, 142, 142))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addComponent(lblTitleReview, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(215, 215, 215)))))
-                    .addContainerGap(13, Short.MAX_VALUE)))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(32, 32, 32)
+                            .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(134, 134, 134)
+                            .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addGap(119, 119, 119)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 296, Short.MAX_VALUE)
+                .addGap(31, 31, 31)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(17, 17, 17))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                .addComponent(lblTitleReview, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(40, 40, 40)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnApprove)
                     .addComponent(btnReject))
-                .addGap(169, 169, 169))
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(31, 31, 31)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                    .addComponent(lblTitleReview, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(18, 18, 18)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(237, Short.MAX_VALUE)))
+                .addGap(141, 141, 141))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -146,7 +260,7 @@ public class ProductAuditorDashboard extends javax.swing.JPanel {
         model.setRowCount(0);  // Clear existing rows
 
         for (Document doc : productCollection.find(
-        new Document("is_promoted", false).append("bid_status", "Pending"))) {
+                new Document("is_promoted", true).append("bid_status", "Pending"))) {
             model.addRow(new Object[]{
                 doc.getString("seller_id"),
                 doc.getString("product_name"),
@@ -187,8 +301,8 @@ public class ProductAuditorDashboard extends javax.swing.JPanel {
         MongoDatabase db = Repository.MongoDBConnection.getDatabase();
         MongoCollection<Document> productCollection = db.getCollection("products");
 
-        Document filter = new Document("product_name", productName);
-        Document update = new Document("$set", new Document("bid_status", "Approved").append("is_promoted", true));
+        Document filter = new Document("product_name", productName); // is_bid_approved
+        Document update = new Document("$set", new Document("bid_status", "Approved").append("is_promoted", true).append("is_bid_approved", true));
 
         productCollection.updateOne(filter, update);
         javax.swing.JOptionPane.showMessageDialog(this, "✅ Bid approved for product: " + productName);

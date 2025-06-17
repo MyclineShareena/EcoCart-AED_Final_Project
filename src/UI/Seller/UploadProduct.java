@@ -6,9 +6,24 @@ package UI.Seller;
 
 import Model.Product;
 import Repository.MongoDBConnection;
+import UI.Buyer.BuyerSplitPage;
 import UI.MainJFrame;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import org.bson.Document;
 
 /**
@@ -28,6 +43,122 @@ public class UploadProduct extends javax.swing.JPanel {
         populateCategories();
         this.mainpage = mainpage;
         this.roleId = roleId;
+
+        // === Styling Variables ===
+        Color ecoBlueBg = new Color(232, 245, 253);      // soft blue bg
+        Color navBlue = new Color(6, 22, 51);            // title/nav text
+        Color primaryBlue = new Color(33, 150, 243);     // button blue
+
+        Font labelFont = new Font("Segoe UI", Font.PLAIN, 13);
+        Font inputFont = new Font("Segoe UI", Font.PLAIN, 13);
+        Font titleFont = new Font("Segoe UI", Font.BOLD, 24);
+        Font subtitleFont = new Font("Segoe UI", Font.BOLD, 18);
+        Font buttonFont = new Font("Segoe UI", Font.BOLD, 16);
+
+// === Panel Styling ===
+        setBackground(ecoBlueBg);
+        setLayout(new BorderLayout(10, 10));
+        
+// === Title and Back Button Panel ===
+        JLabel lblMainTitle = new JLabel("Seller Dashboard", JLabel.CENTER);
+        lblMainTitle.setFont(titleFont);
+        lblMainTitle.setForeground(navBlue);
+
+        JButton backBtn = new JButton("Back");
+        backBtn.setBackground((primaryBlue.darker()));
+        backBtn.setForeground(Color.WHITE);
+        backBtn.setFocusPainted(false);
+        backBtn.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        backBtn.addActionListener(e -> {
+            mainpage.setContentPane(new SellerSplitPage(mainpage));
+            mainpage.revalidate();
+            mainpage.repaint();
+        });
+        
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.setBackground(getBackground());
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 20));
+        titlePanel.add(lblTitle, BorderLayout.CENTER);
+        titlePanel.add(backBtn, BorderLayout.WEST);
+
+// === Subtitle ===
+        JLabel lblSubtitle = new JLabel("Upload Product", SwingConstants.CENTER);
+        lblSubtitle.setFont(subtitleFont);
+
+        JPanel subtitlePanel = new JPanel(new BorderLayout());
+        subtitlePanel.setBackground(getBackground());
+        subtitlePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0));
+        subtitlePanel.add(lblSubtitle, BorderLayout.CENTER);
+
+// === Form Panel with GridBagLayout ===
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        formPanel.setBackground(ecoBlueBg);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(8, 8, 8, 8);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+
+// === Helper to Add Label + Field ===
+        int row = 0;
+
+        String[] labels = {
+            "Product Name", "Product Description", "Category", "Price",
+            "Material Used", "Production Emission (CO2 in KG)", "Manufacturing Location"
+        };
+
+        javax.swing.JComponent[] fields = {
+            txtProdName, ScrollPane, CategoryList, txtPrice1,
+            txtMaterial, txtProdEmission, txtManf
+        };
+
+        for (int i = 0; i < labels.length; i++) {
+            gbc.gridx = 0;
+            gbc.gridy = row;
+            JLabel lbl = new JLabel(labels[i] + ":");
+            lbl.setFont(labelFont);
+            lbl.setForeground(navBlue);
+            formPanel.add(lbl, gbc);
+
+            gbc.gridx = 1;
+            if (fields[i] instanceof javax.swing.JComboBox) {
+                fields[i].setFont(inputFont);
+                fields[i].setBackground(Color.WHITE);
+            } else if (fields[i] instanceof javax.swing.JScrollPane) {
+                ((JScrollPane) fields[i]).setPreferredSize(new Dimension(250, 100));
+            } else {
+                fields[i].setFont(inputFont);
+                fields[i].setPreferredSize(new Dimension(250, 35));
+                fields[i].setBackground(Color.WHITE);
+            }
+            formPanel.add(fields[i], gbc);
+            row++;
+        }
+
+// === Button Panel ===
+        btnSubmit.setFont(buttonFont);
+        btnSubmit.setBackground(primaryBlue);
+        btnSubmit.setForeground(Color.WHITE);
+        btnSubmit.setFocusPainted(false);
+        btnSubmit.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));     
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        buttonPanel.setBackground(ecoBlueBg);
+        buttonPanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+        buttonPanel.add(btnSubmit);
+
+// === Final Layout Assembly ===
+        JPanel northPanel = new JPanel(new BorderLayout());
+        northPanel.setBackground(getBackground());
+        northPanel.add(titlePanel, BorderLayout.NORTH);
+        northPanel.add(subtitlePanel, BorderLayout.SOUTH);
+        add(northPanel, BorderLayout.NORTH);
+
+        JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.LEFT, 60, 10)); // Align left with padding
+        wrapper.setBackground(getBackground());
+        wrapper.add(formPanel);
+        add(wrapper, BorderLayout.CENTER);
+
+        add(buttonPanel, BorderLayout.SOUTH);
+
     }
 
     /**
@@ -143,13 +274,12 @@ public class UploadProduct extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(90, 90, 90)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(47, 47, 47)
+                        .addComponent(BackBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(113, 113, 113)
-                                .addComponent(lblTitleUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                 .addGroup(layout.createSequentialGroup()
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -172,31 +302,26 @@ public class UploadProduct extends javax.swing.JPanel {
                                     .addGap(156, 156, 156)
                                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(txtProdName, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(ScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addGap(163, 163, 163))
+                                        .addComponent(ScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 344, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(119, 119, 119)
+                                .addComponent(lblTitleUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(BackBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(70, 70, 70))))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(276, 276, 276)
-                .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(276, 276, 276)
+                        .addComponent(btnSubmit, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(153, 153, 153))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(29, 29, 29))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(BackBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BackBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblTitleUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(21, 21, 21)
+                .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblProdName, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtProdName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -253,6 +378,7 @@ public class UploadProduct extends javax.swing.JPanel {
         pr.setMaterialsUsed(txtMaterial.getText());
         pr.setCarbon(txtProdEmission.getText());
         pr.setPrice(Double.parseDouble(txtPrice1.getText()));
+        pr.setIs_audit(false);
         pr.setEcoscore(0);
 
         MongoDatabase db = MongoDBConnection.getDatabase();
@@ -319,7 +445,7 @@ public class UploadProduct extends javax.swing.JPanel {
 
         // You can fetch these from a database or keep them static
         String[] categories = {
-            "Select Category","Phone", "Computer", "Furniture", "Appliances",
+            "Select Category", "Phone", "Computer", "Furniture", "Appliances",
             "Clothing", "Books", "Toys", "Kitchenware"
         };
 

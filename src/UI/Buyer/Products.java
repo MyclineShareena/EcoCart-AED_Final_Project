@@ -11,17 +11,44 @@ import Repository.MongoDBConnection;
 import Service.ButtonRenderer;
 import Service.CartButtonEditor;
 import UI.MainJFrame;
+import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Field;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Sorts;
+import java.awt.BorderLayout;
+import java.awt.Color;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.JButton;
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.AbstractCellEditor;
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellEditor;
+import org.bson.conversions.Bson;
 
 /**
  *
@@ -30,26 +57,129 @@ import javax.swing.table.TableCellEditor;
 public class Products extends javax.swing.JPanel {
 
     MainJFrame mainpage;
+    String userId;
 
     /**
      * Creates new form Products
      */
-    public Products(MainJFrame mainpage) {
-        initComponents();
+    public Products(MainJFrame mainpage, String userId) {
+        this.userId = userId;
         this.mainpage = mainpage;
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(232, 245, 233));
+
+        // === Title Panel ===
+        lblTitle = new JLabel("Buyer Dashboard", SwingConstants.CENTER);
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        lblTitle.setForeground(new Color(46, 125, 50));
+
+        BackBTN = new JButton("Back");
+        BackBTN.setBackground(new Color(76, 175, 80));
+        BackBTN.setForeground(Color.WHITE);
+        BackBTN.setFocusPainted(false);
+        BackBTN.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        BackBTN.addActionListener(evt -> {
+            mainpage.setContentPane(new BuyerSplitPage(mainpage, userId));
+            mainpage.invalidate();
+            mainpage.validate();
+        });
+
+        JPanel titlePanel = new JPanel(new BorderLayout());
+        titlePanel.setBackground(new Color(232, 245, 233));
+        titlePanel.add(lblTitle, BorderLayout.CENTER);
+        titlePanel.add(BackBTN, BorderLayout.WEST);
+        titlePanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 20));
+        JPanel northPanel = new JPanel(new BorderLayout());
+        northPanel.setBackground(new Color(232, 245, 233));
+        northPanel.add(titlePanel, BorderLayout.NORTH);
+
+        // === Search Panel ===
+        lblSupplier = new JLabel("Supplier:");
+        lblSupplier.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+
+        cmbSupplier = new JComboBox<>();
+        cmbSupplier.setPreferredSize(new Dimension(150, 25));
+        cmbSupplier.addActionListener(this::cmbSupplierActionPerformed);
+
+        txtSearch = new JTextField(20);
+
+        btnSearchProduct = new JButton("Search Product");
+        btnSearchProduct.setBackground(new Color(76, 175, 80));
+        btnSearchProduct.setForeground(Color.WHITE);
+        btnSearchProduct.setFocusPainted(false);
+        btnSearchProduct.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
+        btnSearchProduct.addActionListener(this::btnSearchProductActionPerformed);
+
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.setBackground(new Color(232, 245, 233));
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 20));
+        searchPanel.add(lblSupplier);
+        searchPanel.add(cmbSupplier);
+        searchPanel.add(txtSearch);
+        searchPanel.add(btnSearchProduct);
+        northPanel.add(searchPanel, BorderLayout.SOUTH);
+
+        add(northPanel, BorderLayout.NORTH);
+        // === Center Panel: Product Page + Table ===
+        lblTitleProd = new JLabel("Product Page", SwingConstants.CENTER);
+        lblTitleProd.setFont(new Font("Segoe UI", Font.BOLD, 18));
+
+        jTable1 = new JTable();
+        jScrollPane1 = new JScrollPane(jTable1);
+        jScrollPane1.setBorder(BorderFactory.createEmptyBorder(10, 20, 20, 20));
+
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setBackground(new Color(232, 245, 233));
+        centerPanel.add(lblTitleProd, BorderLayout.NORTH);
+        centerPanel.add(jScrollPane1, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+
+        // === Table Styling + Data ===
+        setupTableStyle(jTable1);
+        populateTable();
+        populateSupplierComboBox();
+    }
+
+    private void setupTableStyle(JTable table) {
+        table.setModel(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"Product ID", "Product Name", "Price", "Eco Score", "Seller Name", "Add to Cart"}
+                new String[]{"Product ID", "Product Name", "Category", "Price", "Eco Score", "Seller Name", "Add to Cart"}
         ) {
-            @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 5;  // Only "Add to Cart" button editable
+                return column == 6;
             }
         });
 
-        populateTable();
-        populateSupplierComboBox();
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(new Color(200, 230, 201));
+        header.setForeground(new Color(46, 125, 50));
+        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
 
+        table.setRowHeight(25);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        table.setGridColor(new Color(200, 200, 200));
+        table.setSelectionBackground(new Color(165, 214, 167));
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+        table.setFillsViewportHeight(true);
+
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+            final Color evenRow = new Color(232, 245, 233);
+            final Color oddRow = Color.WHITE;
+
+            public Component getTableCellRendererComponent(JTable tbl, Object val, boolean sel, boolean foc, int row, int col) {
+                Component c = super.getTableCellRendererComponent(tbl, val, sel, foc, row, col);
+                if (!sel) {
+                    c.setBackground(row % 2 == 0 ? evenRow : oddRow);
+                } else {
+                    c.setBackground(new Color(165, 214, 167));
+                }
+                return c;
+            }
+        };
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+        }
     }
 
     /**
@@ -57,6 +187,7 @@ public class Products extends javax.swing.JPanel {
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
      */
+    // </editor-fold>
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -70,6 +201,8 @@ public class Products extends javax.swing.JPanel {
         btnSearchProduct = new javax.swing.JButton();
         lblSupplier = new javax.swing.JLabel();
         cmbSupplier = new javax.swing.JComboBox();
+
+        setPreferredSize(new java.awt.Dimension(1000, 500));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -121,28 +254,27 @@ public class Products extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(196, 196, 196)
+                        .addGap(100, 100, 100)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(113, 113, 113)
                                 .addComponent(lblTitleProd, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 315, Short.MAX_VALUE)
                         .addComponent(BackBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(3, 3, 3))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(41, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 801, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(29, 29, 29)
-                                .addComponent(cmbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(153, 153, 153)
-                                .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnSearchProduct)))))
+                        .addComponent(lblSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(cmbSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(153, 153, 153)
+                        .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnSearchProduct)))
                 .addGap(29, 29, 29))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 801, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(91, 91, 91))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -160,28 +292,21 @@ public class Products extends javax.swing.JPanel {
                         .addComponent(txtSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnSearchProduct, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lblSupplier, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(51, 51, 51)
+                .addGap(46, 46, 46)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(154, Short.MAX_VALUE))
+                .addGap(75, 75, 75))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void BackBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackBTNActionPerformed
         // TODO add your handling code here:
-        mainpage.setContentPane(new BuyerSplitPage(mainpage));
+        mainpage.setContentPane(new BuyerSplitPage(mainpage, userId));
         mainpage.invalidate();
         mainpage.validate();
     }//GEN-LAST:event_BackBTNActionPerformed
 
     private void btnSearchProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchProductActionPerformed
-
         String searchTerm = txtSearch.getText().trim().toLowerCase();
-
-        if (searchTerm.isEmpty()) {
-            populateTable(); // Show all products if search is empty
-            return;
-        }
-
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0); // Clear existing rows
 
@@ -189,32 +314,88 @@ public class Products extends javax.swing.JPanel {
         MongoCollection<Document> productCollection = db.getCollection("products");
         MongoCollection<Document> userCollection = db.getCollection("users");
 
-        for (Document doc : productCollection.find(new Document("is_audit", true))) {
+        // Step 1: Get all audited products that match the search
+        List<Document> products = new ArrayList<>();
+        for (Document doc : productCollection.find(Filters.eq("is_audit", true))) {
             String productName = doc.getString("product_name");
             if (productName != null && productName.toLowerCase().contains(searchTerm)) {
-                double price = doc.getDouble("price");
-                String productId  =doc.getString("product_id");
-                String sellerId = doc.getString("seller_id");
-                Integer ecoScore = doc.getInteger("ecoscore");
-
-                Document seller = userCollection.find(new Document("user_id", sellerId)).first();
-                String sellerName = seller != null ? seller.getString("name") : "Unknown";
-
-                model.addRow(new Object[]{
-                    productId, 
-                    productName,
-                    price,
-                    ecoScore,
-                    sellerName,
-                    "Add to Cart"
-                });
+                products.add(doc);
             }
         }
 
-        // Re-apply button renderer/editor
+        // Step 2: Group by category
+        Map<String, List<Document>> groupedByCategory = products.stream()
+                .collect(Collectors.groupingBy(doc -> {
+                    String cat = doc.getString("category");
+                    return cat != null ? cat : "Unknown";
+                }));
+
+        List<Document> finalSorted = new ArrayList<>();
+
+        // Step 3: Sort each group and accumulate
+        groupedByCategory.keySet().stream().sorted().forEach(category -> {
+            List<Document> group = groupedByCategory.get(category);
+
+            List<Document> approved = group.stream()
+                    .filter(p -> Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                    .sorted((d1, d2) -> {
+                        Double b1 = d1.getDouble("bid_amount");
+                        Double b2 = d2.getDouble("bid_amount");
+
+                        double val1 = (b1 != null) ? b1 : 0.0;
+                        double val2 = (b2 != null) ? b2 : 0.0;
+
+                        return Double.compare(val2, val1); // Descending
+                    })
+                    .collect(Collectors.toList());
+
+            List<Document> unapproved = group.stream()
+                    .filter(p -> !Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                    .sorted((d1, d2) -> {
+                        String name1 = d1.getString("product_name");
+                        String name2 = d2.getString("product_name");
+                        return name1.compareToIgnoreCase(name2);
+                    })
+                    .collect(Collectors.toList());
+
+            approved.addAll(unapproved);
+            finalSorted.addAll(approved);
+        });
+
+        // Step 4: Populate the table
+        for (Document doc : finalSorted) {
+            String productId = doc.getString("product_id");
+            String productName = doc.getString("product_name");
+            String category = doc.getString("category");
+            double price = doc.getDouble("price");
+            int ecoScore = doc.getInteger("ecoscore", 0);
+            String sellerId = doc.getString("seller_id");
+
+            Document seller = userCollection.find(new Document("user_id", sellerId)).first();
+            String sellerName = (seller != null) ? seller.getString("name") : "Unknown";
+
+            model.addRow(new Object[]{
+                productId, // This will be hidden from view, but available internally
+                productName,
+                category,
+                price,
+                ecoScore,
+                sellerName,
+                "Add to Cart"
+            });
+        }
+
+        // Step 5: Set up Add to Cart column
         TableColumn cartColumn = jTable1.getColumn("Add to Cart");
         cartColumn.setCellRenderer(new ButtonRenderer());
-        cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1));
+        cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1, userId));
+
+        // Step 6: Hide Product ID column visually, but preserve the data
+        TableColumn idCol = jTable1.getColumnModel().getColumn(0);
+        idCol.setMinWidth(0);
+        idCol.setMaxWidth(0);
+        idCol.setPreferredWidth(0);
+
     }//GEN-LAST:event_btnSearchProductActionPerformed
 
     private void cmbSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbSupplierActionPerformed
@@ -228,27 +409,88 @@ public class Products extends javax.swing.JPanel {
         MongoCollection<Document> productCollection = db.getCollection("products");
         MongoCollection<Document> userCollection = db.getCollection("users");
 
-        for (Document product : productCollection.find(new Document("is_audit", true))) {
+        List<Document> products = new ArrayList<>();
+
+        // Step 1: Filter by is_audit and selected seller
+        for (Document product : productCollection.find(Filters.eq("is_audit", true))) {
             String sellerId = product.getString("seller_id");
             Document seller = userCollection.find(new Document("user_id", sellerId)).first();
-            String sellerName = seller != null ? seller.getString("name") : "Unknown";
+            String sellerName = (seller != null) ? seller.getString("name") : "Unknown";
 
             if (selectedSeller.equals("All Suppliers") || sellerName.equals(selectedSeller)) {
-                model.addRow(new Object[]{
-                    product.getString("product_id"),
-                    product.getString("product_name"),
-                    product.getDouble("price"),
-                    product.getInteger("ecoscore"),
-                    sellerName,
-                    "Add to Cart"
-                });
+                product.append("resolved_seller_name", sellerName); // temporarily store it for later
+                products.add(product);
             }
         }
 
-        // Restore renderer and editor
+        // Step 2: Group by category
+        Map<String, List<Document>> groupedByCategory = products.stream()
+                .collect(Collectors.groupingBy(doc -> {
+                    String cat = doc.getString("category");
+                    return cat != null ? cat : "Unknown";
+                }));
+
+        List<Document> finalSorted = new ArrayList<>();
+
+        // Step 3: Sort within each category
+        groupedByCategory.keySet().stream().sorted().forEach(category -> {
+            List<Document> group = groupedByCategory.get(category);
+
+            List<Document> approved = group.stream()
+                    .filter(p -> Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                    .sorted((d1, d2) -> {
+                        Double b1 = d1.getDouble("bid_amount");
+                        Double b2 = d2.getDouble("bid_amount");
+
+                        double val1 = (b1 != null) ? b1 : 0.0;
+                        double val2 = (b2 != null) ? b2 : 0.0;
+
+                        return Double.compare(val2, val1); // Descending
+                    })
+                    .collect(Collectors.toList());
+
+            List<Document> unapproved = group.stream()
+                    .filter(p -> !Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                    .sorted((d1, d2) -> {
+                        String name1 = d1.getString("product_name");
+                        String name2 = d2.getString("product_name");
+                        return name1.compareToIgnoreCase(name2);
+                    }).collect(Collectors.toList());
+
+            approved.addAll(unapproved);
+            finalSorted.addAll(approved);
+        });
+
+        // Step 4: Populate table
+        for (Document doc : finalSorted) {
+            String productId = doc.getString("product_id");
+            String productName = doc.getString("product_name");
+            String category = doc.getString("category");
+            double price = doc.getDouble("price");
+            int ecoScore = doc.getInteger("ecoscore", 0);
+            String sellerName = doc.getString("resolved_seller_name");
+
+            model.addRow(new Object[]{
+                productId,
+                productName,
+                category,
+                price,
+                ecoScore,
+                sellerName,
+                "Add to Cart"
+            });
+        }
+
+        // Step 5: Restore renderer and editor
         TableColumn cartColumn = jTable1.getColumn("Add to Cart");
         cartColumn.setCellRenderer(new ButtonRenderer());
-        cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1));
+        cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1, userId));
+
+        // Hide product ID column visually
+        TableColumn idCol = jTable1.getColumnModel().getColumn(0);
+        idCol.setMinWidth(0);
+        idCol.setMaxWidth(0);
+        idCol.setPreferredWidth(0);
     }//GEN-LAST:event_cmbSupplierActionPerformed
 
     private void populateSupplierComboBox() {
@@ -279,24 +521,76 @@ public class Products extends javax.swing.JPanel {
 
     public void populateTable() {
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0);
+        model.setRowCount(0); // Clear existing rows
 
         MongoDatabase db = MongoDBConnection.getDatabase();
         MongoCollection<Document> productCollection = db.getCollection("products");
         MongoCollection<Document> userCollection = db.getCollection("users");
 
-        for (Document doc : productCollection.find(new Document("is_audit", true))) {
-            String productId  =doc.getString("product_id");
+        // Step 1: Get all audited products that match the search
+        List<Document> products = new ArrayList<>();
+        for (Document doc : productCollection.find(Filters.eq("is_audit", true))) {
             String productName = doc.getString("product_name");
+            if (productName != null) {
+                products.add(doc);
+            }
+        }
+
+        // Step 2: Group by category
+        Map<String, List<Document>> groupedByCategory = products.stream()
+                .collect(Collectors.groupingBy(doc -> {
+                    String cat = doc.getString("category");
+                    return cat != null ? cat : "Unknown";
+                }));
+
+        List<Document> finalSorted = new ArrayList<>();
+
+        // Step 3: Sort each group and accumulate
+        groupedByCategory.keySet().stream().sorted().forEach(category -> {
+            List<Document> group = groupedByCategory.get(category);
+
+            List<Document> approved = group.stream()
+                    .filter(p -> Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                    .sorted((d1, d2) -> {
+                        Double b1 = d1.getDouble("bid_amount");
+                        Double b2 = d2.getDouble("bid_amount");
+
+                        double val1 = (b1 != null) ? b1 : 0.0;
+                        double val2 = (b2 != null) ? b2 : 0.0;
+
+                        return Double.compare(val2, val1); // Descending
+                    })
+                    .collect(Collectors.toList());
+
+            List<Document> unapproved = group.stream()
+                    .filter(p -> !Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                    .sorted((d1, d2) -> {
+                        String name1 = d1.getString("product_name");
+                        String name2 = d2.getString("product_name");
+                        return name1.compareToIgnoreCase(name2);
+                    })
+                    .collect(Collectors.toList());
+
+            approved.addAll(unapproved);
+            finalSorted.addAll(approved);
+        });
+
+        // Step 4: Populate the table
+        for (Document doc : finalSorted) {
+            String productId = doc.getString("product_id");
+            String productName = doc.getString("product_name");
+            String category = doc.getString("category");
             double price = doc.getDouble("price");
+            int ecoScore = doc.getInteger("ecoscore", 0);
             String sellerId = doc.getString("seller_id");
-            Integer ecoScore = doc.getInteger("ecoscore");
+
             Document seller = userCollection.find(new Document("user_id", sellerId)).first();
-            String sellerName = seller != null ? seller.getString("name") : "Unknown";
+            String sellerName = (seller != null) ? seller.getString("name") : "Unknown";
 
             model.addRow(new Object[]{
-                productId,
+                productId, // This will be hidden from view, but available internally
                 productName,
+                category,
                 price,
                 ecoScore,
                 sellerName,
@@ -304,13 +598,16 @@ public class Products extends javax.swing.JPanel {
             });
         }
 
+        // Step 5: Set up Add to Cart column
         TableColumn cartColumn = jTable1.getColumn("Add to Cart");
         cartColumn.setCellRenderer(new ButtonRenderer());
-        cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1));
-        jTable1.getColumnModel().getColumn(0).setMinWidth(0);
-        jTable1.getColumnModel().getColumn(0).setMaxWidth(0);
-        jTable1.getColumnModel().getColumn(0).setWidth(0);
+        cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1, userId));
 
+        // Step 6: Hide Product ID column visually, but preserve the data
+        TableColumn idCol = jTable1.getColumnModel().getColumn(0);
+        idCol.setMinWidth(0);
+        idCol.setMaxWidth(0);
+        idCol.setPreferredWidth(0);
     }
 
 

@@ -51,7 +51,7 @@ public class ReviewButtonEditor extends DefaultCellEditor {
             try {
                 int selectedRow = table.getSelectedRow();
                 String productId = String.valueOf(table.getValueAt(selectedRow, 0));
-                Integer ecoScore = Integer.parseInt(String.valueOf(table.getValueAt(selectedRow, 4)));
+                Integer ecoScore = Integer.parseInt(String.valueOf(table.getValueAt(selectedRow, 5)));
 
                 // Update MongoDB
                 MongoDatabase db = MongoDBConnection.getDatabase();

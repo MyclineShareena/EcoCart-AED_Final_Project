@@ -17,26 +17,29 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
-              <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="BitAmount" min="-2" pref="159" max="-2" attributes="0"/>
-                  <Component id="jScrollPane1" min="-2" pref="735" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace max="32767" attributes="0"/>
-          </Group>
-          <Group type="102" alignment="0" attributes="0">
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="159" pref="159" max="-2" attributes="0"/>
-                      <Component id="lblTitle" min="-2" pref="465" max="-2" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="BitAmount" min="-2" pref="159" max="-2" attributes="0"/>
+                          <Component id="jScrollPane1" min="-2" pref="735" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="268" pref="268" max="-2" attributes="0"/>
-                      <Component id="lblTitleUpload" min="-2" pref="236" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="159" pref="159" max="-2" attributes="0"/>
+                              <Component id="lblTitle" min="-2" pref="465" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="268" pref="268" max="-2" attributes="0"/>
+                              <Component id="lblTitleUpload" min="-2" pref="236" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="-2" pref="190" max="-2" attributes="0"/>
+                      <Component id="BackBTN" min="-2" pref="88" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="190" max="32767" attributes="0"/>
-              <Component id="BackBTN" min="-2" pref="88" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="98" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -57,7 +60,7 @@
               <Component id="jScrollPane1" min="-2" pref="277" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="36" max="-2" attributes="0"/>
               <Component id="BitAmount" min="-2" pref="29" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="157" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>

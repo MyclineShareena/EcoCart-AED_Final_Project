@@ -5,6 +5,15 @@
 package UI.Seller;
 
 import UI.MainJFrame;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JSplitPane;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 /**
  *
@@ -20,6 +29,90 @@ public class SellerSplitPage extends javax.swing.JPanel {
     public SellerSplitPage(MainJFrame mainpage) {
         initComponents();
         this.mainpage = mainpage;
+
+        // === Styling ===
+        Color navBlue = new Color(6, 22, 51); // dark blue
+        Color buttonBlue = new Color(33, 150, 243); // primary blue
+        Font buttonFont = new Font("Segoe UI", Font.BOLD, 14);
+
+        leftpanel.setBackground(navBlue);
+
+        btnUpload.setBackground(buttonBlue);
+        btnUpload.setForeground(Color.WHITE);
+        btnUpload.setFont(buttonFont);
+        btnUpload.setFocusPainted(false);
+        setupButtonHoverEffect(btnUpload);
+
+        btnView.setBackground(buttonBlue);
+        btnView.setForeground(Color.WHITE);
+        btnView.setFont(buttonFont);
+        btnView.setFocusPainted(false);
+        setupButtonHoverEffect(btnView);
+
+        btnNotify.setBackground(buttonBlue);
+        btnNotify.setForeground(Color.WHITE);
+        btnNotify.setFont(buttonFont);
+        btnNotify.setFocusPainted(false);
+        setupButtonHoverEffect(btnNotify);
+
+        LogoutBTN.setBackground(buttonBlue);
+        LogoutBTN.setForeground(Color.WHITE);
+        LogoutBTN.setFont(buttonFont);
+        LogoutBTN.setFocusPainted(false);
+        setupButtonHoverEffect(LogoutBTN);
+
+        rightpanel.setLayout(new BorderLayout());
+        rightpanel.setBackground(Color.WHITE);
+
+// Remove old layout components from rightpanel
+        rightpanel.removeAll();
+
+// Add the title to the top
+        lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblTitle.setForeground(navBlue);
+        rightpanel.add(lblTitle, BorderLayout.NORTH);
+
+// Center the image
+        jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
+        rightpanel.add(jLabel1, BorderLayout.CENTER);   
+
+        // Optional: UI refinements
+        SplitPane.setDividerSize(0);
+        SplitPane.setBorder(BorderFactory.createEmptyBorder());
+
+    }
+
+    private void setupButtonHoverEffect(JButton button) {
+        Color originalBg = new Color(33, 150, 243);      // blue
+        Color originalFg = Color.WHITE;
+
+        Color hoverBg = new Color(100, 181, 246);        // lighter blue
+        Color hoverFg = Color.WHITE;
+
+        Border originalBorder = BorderFactory.createLineBorder(originalBg.darker());
+        Border hoverBorder = BorderFactory.createLineBorder(hoverBg.darker());
+
+        button.setBackground(originalBg);
+        button.setForeground(originalFg);
+        button.setBorder(originalBorder);
+        button.setFocusPainted(false);
+
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(hoverBg);
+                button.setForeground(hoverFg);
+                button.setBorder(hoverBorder);
+            }
+
+            @Override
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(originalBg);
+                button.setForeground(originalFg);
+                button.setBorder(originalBorder);
+            }
+        });
     }
 
     /**
@@ -36,11 +129,14 @@ public class SellerSplitPage extends javax.swing.JPanel {
         btnUpload = new javax.swing.JButton();
         btnView = new javax.swing.JButton();
         btnNotify = new javax.swing.JButton();
+        LogoutBTN = new javax.swing.JButton();
         rightpanel = new javax.swing.JPanel();
         lblTitle = new javax.swing.JLabel();
-        LogoutBTN = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
-        SplitPane.setPreferredSize(new java.awt.Dimension(1000, 600));
+        setPreferredSize(new java.awt.Dimension(2000, 1100));
+
+        SplitPane.setPreferredSize(new java.awt.Dimension(2000, 1100));
 
         leftpanel.setPreferredSize(new java.awt.Dimension(250, 514));
 
@@ -60,38 +156,6 @@ public class SellerSplitPage extends javax.swing.JPanel {
 
         btnNotify.setText("Notifications");
 
-        javax.swing.GroupLayout leftpanelLayout = new javax.swing.GroupLayout(leftpanel);
-        leftpanel.setLayout(leftpanelLayout);
-        leftpanelLayout.setHorizontalGroup(
-            leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(leftpanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnNotify, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 0, 0))
-        );
-
-        leftpanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btnNotify, btnUpload, btnView});
-
-        leftpanelLayout.setVerticalGroup(
-            leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(leftpanelLayout.createSequentialGroup()
-                .addGap(172, 172, 172)
-                .addComponent(btnUpload)
-                .addGap(18, 18, 18)
-                .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnNotify)
-                .addContainerGap(323, Short.MAX_VALUE))
-        );
-
-        SplitPane.setLeftComponent(leftpanel);
-
-        lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        lblTitle.setText("Seller Dashboard");
-
         LogoutBTN.setText("Logout");
         LogoutBTN.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -99,25 +163,74 @@ public class SellerSplitPage extends javax.swing.JPanel {
             }
         });
 
+        javax.swing.GroupLayout leftpanelLayout = new javax.swing.GroupLayout(leftpanel);
+        leftpanel.setLayout(leftpanelLayout);
+        leftpanelLayout.setHorizontalGroup(
+            leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftpanelLayout.createSequentialGroup()
+                .addGroup(leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(leftpanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, leftpanelLayout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addGroup(leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnNotify, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(0, 0, 0))
+        );
+
+        leftpanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {LogoutBTN, btnNotify, btnView});
+
+        leftpanelLayout.setVerticalGroup(
+            leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(leftpanelLayout.createSequentialGroup()
+                .addGap(172, 172, 172)
+                .addComponent(btnUpload)
+                .addGap(24, 24, 24)
+                .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnNotify)
+                .addGap(202, 202, 202)
+                .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(49, 49, 49))
+        );
+
+        leftpanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {LogoutBTN, btnNotify, btnUpload, btnView});
+
+        SplitPane.setLeftComponent(leftpanel);
+
+        lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTitle.setText("Seller Dashboard");
+
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Seller.png"))); // NOI18N
+        jLabel1.setPreferredSize(new java.awt.Dimension(1000, 800));
+
         javax.swing.GroupLayout rightpanelLayout = new javax.swing.GroupLayout(rightpanel);
         rightpanel.setLayout(rightpanelLayout);
         rightpanelLayout.setHorizontalGroup(
             rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightpanelLayout.createSequentialGroup()
-                .addGap(89, 89, 89)
-                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(33, 33, 33))
+                .addGap(481, 481, 481)
+                .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightpanelLayout.createSequentialGroup()
+                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(102, 102, 102))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, rightpanelLayout.createSequentialGroup()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1247, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(38, 38, 38))))
         );
         rightpanelLayout.setVerticalGroup(
             rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightpanelLayout.createSequentialGroup()
-                .addGap(13, 13, 13)
-                .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(176, 176, 176))
+                .addGap(26, 26, 26)
+                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 160, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 733, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(148, 148, 148))
         );
 
         SplitPane.setRightComponent(rightpanel);
@@ -161,6 +274,7 @@ public class SellerSplitPage extends javax.swing.JPanel {
     private javax.swing.JButton btnNotify;
     private javax.swing.JButton btnUpload;
     private javax.swing.JButton btnView;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JPanel leftpanel;
     private javax.swing.JPanel rightpanel;
