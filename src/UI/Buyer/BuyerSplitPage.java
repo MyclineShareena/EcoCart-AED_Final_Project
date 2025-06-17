@@ -37,7 +37,7 @@ public class BuyerSplitPage extends javax.swing.JPanel {
         this.userId = userId;
         initComponents();
 
-        // === Styling ===
+        //  Styling 
         Color darkGreen = new Color(0, 77, 64);
         Color hoverGreen = new Color(38, 166, 91);
         Font buttonFont = new Font("Segoe UI", Font.BOLD, 14);
