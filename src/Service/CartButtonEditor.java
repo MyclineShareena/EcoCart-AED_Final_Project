@@ -46,7 +46,7 @@ public class CartButtonEditor extends DefaultCellEditor {
 
             for (CartItem item : CartManager.getCartItems()) {
                 if (item.getProductId().contains(productId)) {
-                    item.setQuantity(item.getQuantity() + 1); // ✅ Only increase quantity
+                    item.setQuantity(item.getQuantity() + 1); //  Only increase quantity
                     JOptionPane.showMessageDialog(button, "✅ Quantity updated for: " + item.getProductName());
                     itemExists = true;
                     break;

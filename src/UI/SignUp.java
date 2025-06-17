@@ -175,7 +175,6 @@ public class SignUp extends javax.swing.JPanel {
             }
         });
 
-        txtPassword.setText("jTextField2");
         txtPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtPasswordActionPerformed(evt);
