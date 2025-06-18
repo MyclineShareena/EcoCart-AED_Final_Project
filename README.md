@@ -1,4 +1,4 @@
-<h1>**Eco-Cart+ 🌿**</h1>
+<h1>Eco-Cart+ 🌿</h1>
 
 A Sustainable E-Commerce Java Swing Ecosystem
 
