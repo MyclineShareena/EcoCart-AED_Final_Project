@@ -45,7 +45,7 @@
                       <Component id="CancelOrder1" min="-2" pref="160" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace pref="111" max="32767" attributes="0"/>
+              <EmptySpace min="-2" pref="111" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -59,11 +59,11 @@
               </Group>
               <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
               <Component id="lblTitleProd" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="79" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="61" max="-2" attributes="0"/>
               <Component id="jScrollPane1" min="-2" pref="218" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="94" max="-2" attributes="0"/>
               <Component id="CancelOrder1" min="-2" pref="36" max="-2" attributes="0"/>
-              <EmptySpace pref="64" max="32767" attributes="0"/>
+              <EmptySpace pref="596" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
