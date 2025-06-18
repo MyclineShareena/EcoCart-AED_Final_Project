@@ -1,39 +1,39 @@
-Eco-Cart+ 🌿
+<h1>**Eco-Cart+ 🌿**</h1>
 
 A Sustainable E-Commerce Java Swing Ecosystem
 
-Overview:
+**Overview:**
 
 Eco-Cart+ is a role-based, interactive desktop application built in Java Swing, designed to promote sustainable commerce through a collaborative ecosystem of buyers, sellers, auditors, and logistics personnel. It simulates a multi-enterprise e-commerce environment that incorporates eco-score auditing, carbon tracking, financial transparency, and customer support modules, all designed with real-world workflows in mind.
 
 This project was designed and implemented, meeting the complexity of an enterprise-scale system while showcasing robust software engineering and UI/UX capabilities.
 
-🌱 Key Features
+**Key Features:**
 
-✅ Role-Based Dashboards
+**Role-Based Dashboards:**
 
 Separate interfaces and workflows for Admin, Seller, Buyer, Eco Auditors, Shipping & Finance teams.
 
-🛒 Eco-Certified Product Listings
+**Eco-Certified Product Listings:**
 
 Sellers submit product details, which are verified by external eco-auditors using pre-set sustainability metrics.
 
-📦 Carbon Emissions Tracking
+**Carbon Emissions Tracking:**
 
 Shipping coordinators log delivery paths and calculate emissions, enhancing buyer transparency.
 
-💰 Finance Approval Workflows
+**Finance Approval Workflows:**
 
 Seamless invoicing and payment processes between shipping accountants and seller accountants.
 
-🛠 Customer Support Integration
+**Customer Support Integration:**
 
 Buyers can raise issues, and dedicated customer support roles manage responses.
 
 
-🧱 System Architecture
+**System Architecture:**
 
-🖧 Ecosystem Structure
+**Ecosystem Structure:**
 
 1 Network: Eco-Cart+ Sustainability Network
 
@@ -43,7 +43,7 @@ Buyers can raise issues, and dedicated customer support roles manage responses.
 
 8+ Roles: Admin, Buyer, Seller, Product Auditor, Eco-Score Auditor, Shipping Coordinator, Shipping Accountant, Seller Accountant, Support Staff
 
-🔁 Work Requests Implemented
+**Work Requests Implemented:**
 
 Product Submission & Bid Approval
 
