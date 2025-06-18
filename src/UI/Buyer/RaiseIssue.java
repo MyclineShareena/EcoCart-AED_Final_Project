@@ -316,9 +316,9 @@ public class RaiseIssue extends javax.swing.JPanel {
                                 .addComponent(jComboBox4, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jScrollPane1)))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(574, 574, 574)
+                        .addGap(313, 313, 313)
                         .addComponent(SubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(189, 189, 189))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -339,9 +339,9 @@ public class RaiseIssue extends javax.swing.JPanel {
                 .addComponent(TypeOfComplain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addGap(48, 48, 48)
                 .addComponent(SubmitBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(70, 70, 70))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -442,7 +442,7 @@ public class RaiseIssue extends javax.swing.JPanel {
             jComboBox1.addItem(order.getObjectId("_id").toString());
         }
 
-        // 🔥 Trigger update after loading
+        //  Trigger update after loading
         if (jComboBox1.getItemCount() > 0) {
             jComboBox1.setSelectedIndex(0);
         }
