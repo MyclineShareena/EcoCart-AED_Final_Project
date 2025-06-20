@@ -55,6 +55,9 @@ public class AdminSplitPage extends javax.swing.JPanel {
         rightpanel.setBackground(Color.WHITE); // or use a very light purple background
         rightpanel.add(lblTitle, BorderLayout.NORTH);
 
+        jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
+        rightpanel.add(jLabel1, BorderLayout.CENTER);
+
         SplitPane.setDividerSize(0);
         SplitPane.setBorder(BorderFactory.createEmptyBorder());
     }
@@ -89,7 +92,6 @@ public class AdminSplitPage extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
         SplitPane = new javax.swing.JSplitPane();
         leftpanel = new javax.swing.JPanel();
         btnUsers = new javax.swing.JButton();
@@ -97,9 +99,7 @@ public class AdminSplitPage extends javax.swing.JPanel {
         LogoutBTN = new javax.swing.JButton();
         rightpanel = new javax.swing.JPanel();
         lblTitle = new javax.swing.JLabel();
-
-        jPanel1.setMaximumSize(new java.awt.Dimension(120000000, 120000000));
-        jPanel1.setPreferredSize(new java.awt.Dimension(2000, 1100));
+        jLabel1 = new javax.swing.JLabel();
 
         SplitPane.setPreferredSize(new java.awt.Dimension(2000, 800));
 
@@ -131,12 +131,12 @@ public class AdminSplitPage extends javax.swing.JPanel {
         leftpanelLayout.setHorizontalGroup(
             leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, leftpanelLayout.createSequentialGroup()
-                .addGap(36, 36, 36)
+                .addGap(29, 29, 29)
                 .addGroup(leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnReports, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(15, 15, 15))
+                .addGap(0, 0, 0))
         );
 
         leftpanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {LogoutBTN, btnReports, btnUsers});
@@ -163,13 +163,18 @@ public class AdminSplitPage extends javax.swing.JPanel {
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitle.setText("Admin Dashboard");
 
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Admin.png"))); // NOI18N
+
         javax.swing.GroupLayout rightpanelLayout = new javax.swing.GroupLayout(rightpanel);
         rightpanel.setLayout(rightpanelLayout);
         rightpanelLayout.setHorizontalGroup(
             rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(rightpanelLayout.createSequentialGroup()
-                .addGap(0, 0, 0)
-                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(rightpanelLayout.createSequentialGroup()
+                        .addGap(183, 183, 183)
+                        .addComponent(jLabel1)))
                 .addGap(1399, 1399, 1399))
         );
         rightpanelLayout.setVerticalGroup(
@@ -177,43 +182,24 @@ public class AdminSplitPage extends javax.swing.JPanel {
             .addGroup(rightpanelLayout.createSequentialGroup()
                 .addGap(52, 52, 52)
                 .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(1015, 1015, 1015))
+                .addGap(237, 237, 237)
+                .addComponent(jLabel1)
+                .addContainerGap())
         );
 
         SplitPane.setRightComponent(rightpanel);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(SplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 2000, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, 0))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(SplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1100, Short.MAX_VALUE)
-        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 2000, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(SplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 2000, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1100, Short.MAX_VALUE)
-            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(layout.createSequentialGroup()
-                    .addGap(0, 0, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addComponent(SplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1160, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -242,7 +228,7 @@ public class AdminSplitPage extends javax.swing.JPanel {
     private javax.swing.JSplitPane SplitPane;
     private javax.swing.JButton btnReports;
     private javax.swing.JButton btnUsers;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JPanel leftpanel;
     private javax.swing.JPanel rightpanel;

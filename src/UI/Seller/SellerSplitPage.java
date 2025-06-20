@@ -36,30 +36,15 @@ public class SellerSplitPage extends javax.swing.JPanel {
         Font buttonFont = new Font("Segoe UI", Font.BOLD, 14);
 
         leftpanel.setBackground(navBlue);
-
-        btnUpload.setBackground(buttonBlue);
-        btnUpload.setForeground(Color.WHITE);
-        btnUpload.setFont(buttonFont);
-        btnUpload.setFocusPainted(false);
-        setupButtonHoverEffect(btnUpload);
-
-        btnView.setBackground(buttonBlue);
-        btnView.setForeground(Color.WHITE);
-        btnView.setFont(buttonFont);
-        btnView.setFocusPainted(false);
-        setupButtonHoverEffect(btnView);
-
-       /*** btnNotify.setBackground(buttonBlue);
-        btnNotify.setForeground(Color.WHITE);
-        btnNotify.setFont(buttonFont);
-        btnNotify.setFocusPainted(false);
-        setupButtonHoverEffect(btnNotify);
-***/
-        LogoutBTN.setBackground(buttonBlue);
-        LogoutBTN.setForeground(Color.WHITE);
-        LogoutBTN.setFont(buttonFont);
-        LogoutBTN.setFocusPainted(false);
-        setupButtonHoverEffect(LogoutBTN);
+        
+        JButton[] buttons = {btnUpload, btnView, LogoutBTN};
+        for (JButton btn : buttons) {
+            btn.setBackground(navBlue);
+            btn.setForeground(Color.WHITE);
+            btn.setFont(buttonFont);
+            btn.setFocusPainted(false);
+            btn.setBorder(BorderFactory.createLineBorder(navBlue.darker()));
+        }
 
         rightpanel.setLayout(new BorderLayout());
         rightpanel.setBackground(Color.WHITE);
@@ -70,14 +55,13 @@ public class SellerSplitPage extends javax.swing.JPanel {
 // Add the title to the top
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        lblTitle.setForeground(navBlue);
+        lblTitle.setForeground(new Color(0, 77, 64));
         rightpanel.add(lblTitle, BorderLayout.NORTH);
 
 // Center the image
         jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
-        rightpanel.add(jLabel1, BorderLayout.CENTER);   
+        rightpanel.add(jLabel1, BorderLayout.CENTER);
 
-        // Optional: UI refinements
         SplitPane.setDividerSize(0);
         SplitPane.setBorder(BorderFactory.createEmptyBorder());
 
@@ -137,7 +121,7 @@ public class SellerSplitPage extends javax.swing.JPanel {
 
         SplitPane.setPreferredSize(new java.awt.Dimension(2000, 1100));
 
-        leftpanel.setPreferredSize(new java.awt.Dimension(250, 514));
+        leftpanel.setPreferredSize(new java.awt.Dimension(250, 800));
 
         btnUpload.setText("Upload Product");
         btnUpload.addActionListener(new java.awt.event.ActionListener() {
@@ -165,15 +149,11 @@ public class SellerSplitPage extends javax.swing.JPanel {
         leftpanelLayout.setHorizontalGroup(
             leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftpanelLayout.createSequentialGroup()
-                .addGroup(leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(leftpanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, leftpanelLayout.createSequentialGroup()
-                        .addGap(42, 42, 42)
-                        .addGroup(leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(21, 21, 21)
+                .addGroup(leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnUpload, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 0, 0))
         );
 
@@ -182,11 +162,11 @@ public class SellerSplitPage extends javax.swing.JPanel {
         leftpanelLayout.setVerticalGroup(
             leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(leftpanelLayout.createSequentialGroup()
-                .addGap(172, 172, 172)
+                .addGap(168, 168, 168)
                 .addComponent(btnUpload)
-                .addGap(24, 24, 24)
+                .addGap(27, 27, 27)
                 .addComponent(btnView, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(253, 253, 253)
+                .addGap(269, 269, 269)
                 .addComponent(LogoutBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(49, 49, 49))
         );

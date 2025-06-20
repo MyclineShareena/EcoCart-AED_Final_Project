@@ -43,22 +43,21 @@ public class UploadProduct extends javax.swing.JPanel {
         populateCategories();
         this.mainpage = mainpage;
         this.roleId = roleId;
-
+//Panel Styling
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(232, 245, 253));
+        
         //Styling Variables
         Color ecoBlueBg = new Color(232, 245, 253);      // soft blue bg
         Color navBlue = new Color(6, 22, 51);            // title/nav text
         Color primaryBlue = new Color(33, 150, 243);     // button blue
-
+        
         Font labelFont = new Font("Segoe UI", Font.PLAIN, 13);
         Font inputFont = new Font("Segoe UI", Font.PLAIN, 13);
         Font titleFont = new Font("Segoe UI", Font.BOLD, 24);
         Font subtitleFont = new Font("Segoe UI", Font.BOLD, 18);
         Font buttonFont = new Font("Segoe UI", Font.BOLD, 16);
 
-//Panel Styling
-        setBackground(ecoBlueBg);
-        setLayout(new BorderLayout(10, 10));
-        
 //Title and Back Button Panel
         JLabel lblMainTitle = new JLabel("Seller Dashboard", JLabel.CENTER);
         lblMainTitle.setFont(titleFont);
@@ -74,7 +73,7 @@ public class UploadProduct extends javax.swing.JPanel {
             mainpage.revalidate();
             mainpage.repaint();
         });
-        
+
         JPanel titlePanel = new JPanel(new BorderLayout());
         titlePanel.setBackground(getBackground());
         titlePanel.setBorder(BorderFactory.createEmptyBorder(10, 20, 0, 20));
@@ -138,7 +137,7 @@ public class UploadProduct extends javax.swing.JPanel {
         btnSubmit.setBackground(primaryBlue);
         btnSubmit.setForeground(Color.WHITE);
         btnSubmit.setFocusPainted(false);
-        btnSubmit.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));     
+        btnSubmit.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.setBackground(ecoBlueBg);
