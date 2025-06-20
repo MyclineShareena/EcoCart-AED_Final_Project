@@ -201,7 +201,7 @@ public class BuyerSplitPage extends javax.swing.JPanel {
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Environmenta.png"))); // NOI18N
-        jLabel1.setPreferredSize(null);
+        jLabel1.setPreferredSize(new java.awt.Dimension(1248, 832));
 
         javax.swing.GroupLayout rightpanelLayout = new javax.swing.GroupLayout(rightpanel);
         rightpanel.setLayout(rightpanelLayout);
@@ -210,11 +210,11 @@ public class BuyerSplitPage extends javax.swing.JPanel {
             .addGroup(rightpanelLayout.createSequentialGroup()
                 .addGroup(rightpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(rightpanelLayout.createSequentialGroup()
-                        .addGap(347, 347, 347)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 775, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(rightpanelLayout.createSequentialGroup()
                         .addGap(499, 499, 499)
-                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(rightpanelLayout.createSequentialGroup()
+                        .addGap(90, 90, 90)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1032, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         rightpanelLayout.setVerticalGroup(
@@ -222,9 +222,9 @@ public class BuyerSplitPage extends javax.swing.JPanel {
             .addGroup(rightpanelLayout.createSequentialGroup()
                 .addGap(36, 36, 36)
                 .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(215, 215, 215)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 689, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(324, 324, 324))
         );
 
         SplitPane.setRightComponent(rightpanel);

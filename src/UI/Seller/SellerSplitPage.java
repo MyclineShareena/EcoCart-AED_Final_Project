@@ -30,74 +30,60 @@ public class SellerSplitPage extends javax.swing.JPanel {
         initComponents();
         this.mainpage = mainpage;
 
-        //  Styling
+        // === Styling ===
         Color navBlue = new Color(6, 22, 51); // dark blue
-        Color buttonBlue = new Color(33, 150, 243); // primary blue
-        Font buttonFont = new Font("Segoe UI", Font.BOLD, 14);
+        Color hoverBlue = new Color(33, 150, 243); // primary blue
+        Color lightText = Color.WHITE;
 
         leftpanel.setBackground(navBlue);
-        
+
         JButton[] buttons = {btnUpload, btnView, LogoutBTN};
         for (JButton btn : buttons) {
             btn.setBackground(navBlue);
-            btn.setForeground(Color.WHITE);
-            btn.setFont(buttonFont);
+            btn.setForeground(lightText);
+            btn.setFont(new Font("Segoe UI", Font.BOLD, 14));
             btn.setFocusPainted(false);
             btn.setBorder(BorderFactory.createLineBorder(navBlue.darker()));
+            setupButtonHoverEffect(btn, navBlue, hoverBlue);
         }
 
         rightpanel.setLayout(new BorderLayout());
         rightpanel.setBackground(Color.WHITE);
-
-// Remove old layout components from rightpanel
         rightpanel.removeAll();
 
-// Add the title to the top
         lblTitle.setHorizontalAlignment(SwingConstants.CENTER);
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        lblTitle.setForeground(new Color(0, 77, 64));
+        lblTitle.setForeground(navBlue);
         rightpanel.add(lblTitle, BorderLayout.NORTH);
 
-// Center the image
         jLabel1.setHorizontalAlignment(SwingConstants.CENTER);
         rightpanel.add(jLabel1, BorderLayout.CENTER);
 
         SplitPane.setDividerSize(0);
         SplitPane.setBorder(BorderFactory.createEmptyBorder());
-
     }
 
-    private void setupButtonHoverEffect(JButton button) {
-        Color originalBg = new Color(33, 150, 243);      // blue
-        Color originalFg = Color.WHITE;
-
-        Color hoverBg = new Color(100, 181, 246);        // lighter blue
-        Color hoverFg = Color.WHITE;
-
+    private void setupButtonHoverEffect(JButton button, Color originalBg, Color hoverBg) {
         Border originalBorder = BorderFactory.createLineBorder(originalBg.darker());
         Border hoverBorder = BorderFactory.createLineBorder(hoverBg.darker());
-
-        button.setBackground(originalBg);
-        button.setForeground(originalFg);
-        button.setBorder(originalBorder);
-        button.setFocusPainted(false);
 
         button.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 button.setBackground(hoverBg);
-                button.setForeground(hoverFg);
+                button.setForeground(Color.WHITE);
                 button.setBorder(hoverBorder);
             }
 
             @Override
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 button.setBackground(originalBg);
-                button.setForeground(originalFg);
+                button.setForeground(Color.WHITE);
                 button.setBorder(originalBorder);
             }
         });
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.

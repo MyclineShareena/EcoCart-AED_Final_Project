@@ -164,6 +164,7 @@ public class AdminSplitPage extends javax.swing.JPanel {
         lblTitle.setText("Admin Dashboard");
 
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Images/Admin.png"))); // NOI18N
+        jLabel1.setRequestFocusEnabled(false);
 
         javax.swing.GroupLayout rightpanelLayout = new javax.swing.GroupLayout(rightpanel);
         rightpanel.setLayout(rightpanelLayout);
