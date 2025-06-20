@@ -72,43 +72,88 @@ public class Reports extends javax.swing.JPanel {
     private void initComponents() {
 
         lblTitle = new javax.swing.JLabel();
+        BackBTN = new javax.swing.JButton();
 
         lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         lblTitle.setText("Reports");
+
+        BackBTN.setText("Back");
+        BackBTN.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BackBTNActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(111, 111, 111)
+                .addComponent(BackBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 294, Short.MAX_VALUE)
                 .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(253, 253, 253))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(38, 38, 38)
+                        .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(50, 50, 50)
+                        .addComponent(BackBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(394, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void BackBTNActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BackBTNActionPerformed
+        // TODO add your handling code here:
+        mainpage.setContentPane(new AdminSplitPage(mainpage));
+        mainpage.invalidate();
+        mainpage.validate();
+    }//GEN-LAST:event_BackBTNActionPerformed
 
     private void setupUI() {
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(242, 236, 248)); // light lavender purple
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        // Keep the original title from initComponents() but hide it
-        lblTitle.setVisible(false);
+        // --- NORTH Panel ---
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBackground(getBackground());
+        topPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
 
-        // Add new title
-        JLabel titleLabel = new JLabel("Reports Dashboard", SwingConstants.CENTER);
-        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        titleLabel.setForeground(new Color(88, 52, 146));
-        titleLabel.setBorder(new EmptyBorder(0, 0, 20, 0));
-        add(titleLabel, BorderLayout.NORTH);
+        JButton BackBTN = new JButton("Back");
+        BackBTN.setBackground(new Color(224, 210, 255));
+        BackBTN.setForeground(new Color(55, 30, 100));
+        BackBTN.setFocusPainted(false);
+        BackBTN.addActionListener(e -> {
+            mainpage.setContentPane(new AdminSplitPage(mainpage));
+            mainpage.invalidate();
+            mainpage.validate();
+        });
+
+        JLabel header = new JLabel("Admin Dashboard", SwingConstants.CENTER);
+        header.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        header.setForeground(new Color(88, 52, 146));
+
+        topPanel.add(BackBTN, BorderLayout.WEST);
+        topPanel.add(header, BorderLayout.CENTER);
+        add(topPanel, BorderLayout.NORTH);
+
+        // --- CENTER Panel ---
+        JPanel centerPanel = new JPanel(new BorderLayout());
+        centerPanel.setBackground(getBackground());
+
+        lblTitle.setText("Reports");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        lblTitle.setForeground(new Color(88, 52, 146));
+        lblTitle.setBorder(new EmptyBorder(10, 0, 10, 0));
+        centerPanel.add(lblTitle, BorderLayout.NORTH);
 
         // Create main content panel to hold filters and table vertically
         JPanel contentPanel = new JPanel(new BorderLayout(0, 15));
@@ -122,7 +167,8 @@ public class Reports extends javax.swing.JPanel {
         JPanel tablePanel = createTablePanel();
         contentPanel.add(tablePanel, BorderLayout.CENTER);
 
-        add(contentPanel, BorderLayout.CENTER);
+        centerPanel.add(contentPanel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
     }
 
     private JPanel createFiltersPanel() {
@@ -632,6 +678,7 @@ public class Reports extends javax.swing.JPanel {
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BackBTN;
     private javax.swing.JLabel lblTitle;
     // End of variables declaration//GEN-END:variables
 }
