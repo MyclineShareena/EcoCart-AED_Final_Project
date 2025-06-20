@@ -5,6 +5,29 @@
 package UI.Admin;
 
 import UI.MainJFrame;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import javax.swing.table.DefaultTableModel;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+import static com.mongodb.client.model.Filters.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.JTableHeader;
+import com.toedter.calendar.JDateChooser;
 
 /**
  *
@@ -13,6 +36,20 @@ import UI.MainJFrame;
 public class Reports extends javax.swing.JPanel {
 
     private MainJFrame mainpage;
+    private JComboBox<String> statusComboBox;
+    private JDateChooser fromDateChooser;
+    private JDateChooser toDateChooser;
+    private JComboBox<String> scoreOperatorComboBox;
+    private JTextField scoreValueField;
+    private JButton filterButton;
+    private JButton clearButton;
+
+    // Data table
+    private JTable ordersTable;
+    private DefaultTableModel tableModel;
+
+    // Data
+    private List<String> availableStatuses;
 
     /**
      * Creates new form Reports
@@ -20,6 +57,9 @@ public class Reports extends javax.swing.JPanel {
     public Reports(MainJFrame mainpage) {
         this.mainpage = mainpage;
         initComponents();
+        setupUI();
+        loadAvailableStatuses();
+        loadOrdersData();
     }
 
     /**
@@ -55,7 +95,542 @@ public class Reports extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void setupUI() {
+        setLayout(new BorderLayout(10, 10));
+        setBackground(new Color(242, 236, 248)); // light lavender purple
+        setBorder(new EmptyBorder(20, 20, 20, 20));
 
+        // Keep the original title from initComponents() but hide it
+        lblTitle.setVisible(false);
+
+        // Add new title
+        JLabel titleLabel = new JLabel("Reports Dashboard", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        titleLabel.setForeground(new Color(88, 52, 146));
+        titleLabel.setBorder(new EmptyBorder(0, 0, 20, 0));
+        add(titleLabel, BorderLayout.NORTH);
+
+        // Create main content panel to hold filters and table vertically
+        JPanel contentPanel = new JPanel(new BorderLayout(0, 15));
+        contentPanel.setBackground(getBackground());
+
+        // Filters Panel at the top
+        JPanel filtersPanel = createFiltersPanel();
+        contentPanel.add(filtersPanel, BorderLayout.NORTH);
+
+        // Table Panel below filters
+        JPanel tablePanel = createTablePanel();
+        contentPanel.add(tablePanel, BorderLayout.CENTER);
+
+        add(contentPanel, BorderLayout.CENTER);
+    }
+
+    private JPanel createFiltersPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(getBackground());
+        panel.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(88, 52, 146), 2),
+                "Filters",
+                0, 0,
+                new Font("Segoe UI", Font.BOLD, 16),
+                new Color(88, 52, 146)
+        ));
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.anchor = GridBagConstraints.WEST;
+
+        // Status Filter
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        panel.add(new JLabel("Status:"), gbc);
+
+        gbc.gridx = 1;
+        statusComboBox = new JComboBox<>();
+        statusComboBox.setPreferredSize(new java.awt.Dimension(150, 30));
+        styleComboBox(statusComboBox);
+        panel.add(statusComboBox, gbc);
+
+        // Date Range Filter
+        gbc.gridx = 2;
+        gbc.gridy = 0;
+        panel.add(new JLabel("From Date:"), gbc);
+
+        gbc.gridx = 3;
+        fromDateChooser = new JDateChooser();
+        fromDateChooser.setPreferredSize(new java.awt.Dimension(150, 30));
+        fromDateChooser.setDateFormatString("yyyy-MM-dd");
+        panel.add(fromDateChooser, gbc);
+
+        gbc.gridx = 4;
+        gbc.gridy = 0;
+        panel.add(new JLabel("To Date:"), gbc);
+
+        gbc.gridx = 5;
+        toDateChooser = new JDateChooser();
+        toDateChooser.setPreferredSize(new java.awt.Dimension(150, 30));
+        toDateChooser.setDateFormatString("yyyy-MM-dd");
+        panel.add(toDateChooser, gbc);
+
+        // Total Score Filter
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        panel.add(new JLabel("Total Score:"), gbc);
+
+        gbc.gridx = 1;
+        scoreOperatorComboBox = new JComboBox<>(new String[]{"All", "Greater Than", "Less Than", "Equal To"});
+        scoreOperatorComboBox.setPreferredSize(new java.awt.Dimension(150, 30));
+        styleComboBox(scoreOperatorComboBox);
+        panel.add(scoreOperatorComboBox, gbc);
+
+        gbc.gridx = 2;
+        scoreValueField = new JTextField();
+        scoreValueField.setPreferredSize(new java.awt.Dimension(100, 30));
+        scoreValueField.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        panel.add(scoreValueField, gbc);
+
+        // Buttons
+        gbc.gridx = 3;
+        gbc.gridy = 1;
+        filterButton = new JButton("Apply Filters");
+        styleButton(filterButton, new Color(88, 52, 146), Color.WHITE);
+        filterButton.addActionListener(e -> applyFilters());
+        panel.add(filterButton, gbc);
+
+        gbc.gridx = 4;
+        clearButton = new JButton("Clear Filters");
+        styleButton(clearButton, new Color(195, 170, 255), Color.BLACK);
+        clearButton.addActionListener(e -> clearFilters());
+        panel.add(clearButton, gbc);
+
+        return panel;
+    }
+
+    private JPanel createTablePanel() {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBackground(getBackground());
+        panel.setBorder(new EmptyBorder(10, 0, 0, 0));
+
+        // Table title
+        JLabel tableTitle = new JLabel("Orders Data", SwingConstants.CENTER);
+        tableTitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
+        tableTitle.setForeground(new Color(88, 52, 146));
+        tableTitle.setBorder(new EmptyBorder(0, 0, 15, 0));
+        panel.add(tableTitle, BorderLayout.NORTH);
+
+        // Table - Updated column name from "User ID" to "Username"
+        String[] columnNames = {
+            "Delivery Address", "Username", "Total", "Status",
+            "Ordered Date", "Eco Status", "Total Eco Score"
+        };
+
+        tableModel = new DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make table read-only
+            }
+        };
+
+        ordersTable = new JTable(tableModel);
+        styleTable(ordersTable);
+
+        JScrollPane scrollPane = new JScrollPane(ordersTable);
+        scrollPane.setPreferredSize(new java.awt.Dimension(1000, 450));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
+
+        // Enable scrolling
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        // Download button panel
+        JPanel downloadPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        downloadPanel.setBackground(getBackground());
+        downloadPanel.setBorder(new EmptyBorder(15, 0, 0, 0));
+
+        JButton downloadButton = new JButton("Download PDF");
+        styleButton(downloadButton, new Color(34, 139, 34), Color.WHITE); // Green color
+        downloadButton.addActionListener(e -> downloadTableAsPDF());
+        downloadPanel.add(downloadButton);
+
+        panel.add(downloadPanel, BorderLayout.SOUTH);
+
+        return panel;
+    }
+
+    private void styleComboBox(JComboBox<String> comboBox) {
+        comboBox.setBackground(Color.WHITE);
+        comboBox.setForeground(Color.BLACK);
+        comboBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        comboBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200)));
+    }
+
+    private void styleButton(JButton button, Color bgColor, Color fgColor) {
+        button.setBackground(bgColor);
+        button.setForeground(fgColor);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        button.setFocusPainted(false);
+        button.setBorder(BorderFactory.createEmptyBorder(8, 16, 8, 16));
+        button.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }
+
+    private void styleTable(JTable table) {
+        table.setRowHeight(28);
+        table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        table.setGridColor(new Color(220, 220, 220));
+        table.setSelectionBackground(new Color(210, 190, 255));
+        table.setSelectionForeground(Color.BLACK);
+
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(new Color(224, 210, 255));
+        header.setForeground(new Color(88, 52, 146));
+        header.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        header.setPreferredSize(new java.awt.Dimension(header.getPreferredSize().width, 35));
+
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+            final Color evenRow = new Color(250, 250, 250);
+            final Color oddRow = Color.WHITE;
+
+            public Component getTableCellRendererComponent(JTable tbl, Object val, boolean sel, boolean foc, int row, int col) {
+                Component c = super.getTableCellRendererComponent(tbl, val, sel, foc, row, col);
+                if (!sel) {
+                    c.setBackground(row % 2 == 0 ? evenRow : oddRow);
+                }
+                return c;
+            }
+        };
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+        }
+
+        // Set column widths
+        table.getColumnModel().getColumn(0).setPreferredWidth(200); // Delivery Address
+        table.getColumnModel().getColumn(1).setPreferredWidth(120); // Username
+        table.getColumnModel().getColumn(2).setPreferredWidth(80);  // Total
+        table.getColumnModel().getColumn(3).setPreferredWidth(100); // Status
+        table.getColumnModel().getColumn(4).setPreferredWidth(120); // Ordered Date
+        table.getColumnModel().getColumn(5).setPreferredWidth(100); // Eco Status
+        table.getColumnModel().getColumn(6).setPreferredWidth(120); // Total Eco Score
+    }
+
+    private void loadAvailableStatuses() {
+        try {
+            MongoDatabase db = Repository.MongoDBConnection.getDatabase();
+            MongoCollection<Document> ordersCollection = db.getCollection("orders");
+
+            Set<String> statusSet = new HashSet<>();
+            statusSet.add("All"); // Add "All" option
+
+            for (Document doc : ordersCollection.find(eq("isDeleted", false))) {
+                String status = doc.getString("status");
+                if (status != null && !status.isEmpty()) {
+                    statusSet.add(status);
+                }
+            }
+
+            availableStatuses = new ArrayList<>(statusSet);
+            Collections.sort(availableStatuses);
+
+            // Populate status combo box
+            statusComboBox.removeAllItems();
+            for (String status : availableStatuses) {
+                statusComboBox.addItem(status);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Error loading statuses: " + e.getMessage(),
+                    "Database Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void loadOrdersData() {
+        loadOrdersData(null); // Load all data initially
+    }
+
+    private void loadOrdersData(Bson filter) {
+        try {
+            MongoDatabase db = Repository.MongoDBConnection.getDatabase();
+            MongoCollection<Document> ordersCollection = db.getCollection("orders");
+            MongoCollection<Document> usersCollection = db.getCollection("users");
+
+            // Base filter - only non-deleted orders
+            Bson baseFilter = eq("isDeleted", false);
+
+            // Combine with additional filter if provided
+            Bson finalFilter = filter != null ? and(baseFilter, filter) : baseFilter;
+
+            // Clear existing data
+            tableModel.setRowCount(0);
+
+            for (Document doc : ordersCollection.find(finalFilter)) {
+                Object[] row = new Object[7];
+                row[0] = doc.getString("delivery_address") != null ? doc.getString("delivery_address") : "N/A";
+
+                // Get username from users table using userId
+                String userId = doc.getString("userId");
+                String username = "N/A";
+                if (userId != null) {
+                    Document userDoc = usersCollection.find(eq("user_id", userId)).first();
+                    if (userDoc != null) {
+                        username = userDoc.getString("username");
+                        if (username == null) {
+                            username = "N/A";
+                        }
+                    }
+                }
+                row[1] = username;
+
+                // Handle total as either Double or Integer
+                Object totalObj = doc.get("total");
+                if (totalObj instanceof Double) {
+                    row[2] = String.format("%.2f", (Double) totalObj);
+                } else if (totalObj instanceof Integer) {
+                    row[2] = String.format("%.2f", ((Integer) totalObj).doubleValue());
+                } else {
+                    row[2] = "0.00";
+                }
+
+                row[3] = doc.getString("status") != null ? doc.getString("status") : "N/A";
+
+                // Handle ordered_date as String
+                String orderDateStr = doc.getString("ordered_date");
+                row[4] = orderDateStr != null ? orderDateStr : "N/A";
+
+                row[5] = doc.getString("eco_status") != null ? doc.getString("eco_status") : "N/A";
+
+                // Handle total_eco_score as either Double or Integer
+                Object ecoScoreObj = doc.get("total_eco_score");
+                if (ecoScoreObj instanceof Double) {
+                    row[6] = String.format("%.2f", (Double) ecoScoreObj);
+                } else if (ecoScoreObj instanceof Integer) {
+                    row[6] = String.format("%.2f", ((Integer) ecoScoreObj).doubleValue());
+                } else {
+                    row[6] = "0.00";
+                }
+
+                tableModel.addRow(row);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Error loading orders data: " + e.getMessage(),
+                    "Database Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void applyFilters() {
+        try {
+            List<Bson> filters = new ArrayList<>();
+
+            // Status filter
+            String selectedStatus = (String) statusComboBox.getSelectedItem();
+            if (selectedStatus != null && !selectedStatus.equals("All")) {
+                filters.add(eq("status", selectedStatus));
+            }
+
+            // Date range filter (handling ordered_date as String)
+            Date fromDate = fromDateChooser.getDate();
+            Date toDate = toDateChooser.getDate();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+            if (fromDate != null && toDate != null) {
+                String fromDateStr = dateFormat.format(fromDate);
+                String toDateStr = dateFormat.format(toDate);
+
+                // Use regex pattern for date string comparison
+                filters.add(gte("ordered_date", fromDateStr));
+                filters.add(lte("ordered_date", toDateStr));
+            } else if (fromDate != null) {
+                String fromDateStr = dateFormat.format(fromDate);
+                filters.add(gte("ordered_date", fromDateStr));
+            } else if (toDate != null) {
+                String toDateStr = dateFormat.format(toDate);
+                filters.add(lte("ordered_date", toDateStr));
+            }
+
+            // Total score filter
+            String scoreOperator = (String) scoreOperatorComboBox.getSelectedItem();
+            String scoreValue = scoreValueField.getText().trim();
+
+            if (!scoreOperator.equals("All") && !scoreValue.isEmpty()) {
+                try {
+                    double score = Double.parseDouble(scoreValue);
+                    switch (scoreOperator) {
+                        case "Greater Than":
+                            filters.add(gt("total_eco_score", score));
+                            break;
+                        case "Less Than":
+                            filters.add(lt("total_eco_score", score));
+                            break;
+                        case "Equal To":
+                            // Handle both Integer and Double comparison
+                            filters.add(or(eq("total_eco_score", score), eq("total_eco_score", (int) score)));
+                            break;
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this,
+                            "Please enter a valid number for total score.",
+                            "Invalid Input",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+            }
+
+            // Combine all filters
+            Bson combinedFilter = null;
+            if (!filters.isEmpty()) {
+                combinedFilter = filters.size() == 1 ? filters.get(0) : and(filters);
+            }
+
+            // Load filtered data
+            loadOrdersData(combinedFilter);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Error applying filters: " + e.getMessage(),
+                    "Filter Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void clearFilters() {
+        statusComboBox.setSelectedItem("All");
+        fromDateChooser.setDate(null);
+        toDateChooser.setDate(null);
+        scoreOperatorComboBox.setSelectedItem("All");
+        scoreValueField.setText("");
+
+        // Reload all data
+        loadOrdersData();
+    }
+
+    private void downloadTableAsPDF() {
+        try {
+            // Show file chooser dialog
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Save PDF Report");
+            fileChooser.setSelectedFile(new java.io.File("Orders_Report_"
+                    + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".pdf"));
+            fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("PDF files", "pdf"));
+
+            int result = fileChooser.showSaveDialog(this);
+
+            if (result == JFileChooser.APPROVE_OPTION) {
+                java.io.File selectedFile = fileChooser.getSelectedFile();
+                String filePath = selectedFile.getAbsolutePath();
+
+                // Ensure .pdf extension
+                if (!filePath.toLowerCase().endsWith(".pdf")) {
+                    filePath += ".pdf";
+                }
+
+                generatePDF(filePath);
+
+                // Show success message
+                JOptionPane.showMessageDialog(this,
+                        "PDF report saved successfully!\nLocation: " + filePath,
+                        "Download Complete",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "Error downloading PDF: " + e.getMessage(),
+                    "Download Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void generatePDF(String filePath) {
+        try {
+            // Create PDF document
+            com.itextpdf.text.Document document = new com.itextpdf.text.Document(com.itextpdf.text.PageSize.A4.rotate());
+            com.itextpdf.text.pdf.PdfWriter.getInstance(document, new java.io.FileOutputStream(filePath));
+
+            document.open();
+
+            // Add title
+            com.itextpdf.text.Font titleFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 18, com.itextpdf.text.Font.BOLD);
+            com.itextpdf.text.Paragraph title = new com.itextpdf.text.Paragraph("Orders Report", titleFont);
+            title.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            title.setSpacingAfter(20);
+            document.add(title);
+
+            // Add generation date
+            com.itextpdf.text.Font dateFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 10, com.itextpdf.text.Font.NORMAL);
+            com.itextpdf.text.Paragraph date = new com.itextpdf.text.Paragraph("Generated on: "
+                    + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()), dateFont);
+            date.setAlignment(com.itextpdf.text.Element.ALIGN_RIGHT);
+            date.setSpacingAfter(20);
+            document.add(date);
+
+            // Create table
+            com.itextpdf.text.pdf.PdfPTable pdfTable = new com.itextpdf.text.pdf.PdfPTable(tableModel.getColumnCount());
+            pdfTable.setWidthPercentage(100);
+
+            // Set column widths
+            float[] columnWidths = {25f, 15f, 10f, 12f, 15f, 12f, 15f}; // Percentages
+            pdfTable.setWidths(columnWidths);
+
+            // Add header
+            com.itextpdf.text.Font headerFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 12, com.itextpdf.text.Font.BOLD);
+            for (int i = 0; i < tableModel.getColumnCount(); i++) {
+                com.itextpdf.text.pdf.PdfPCell cell = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(tableModel.getColumnName(i), headerFont));
+                cell.setBackgroundColor(new com.itextpdf.text.BaseColor(224, 210, 255)); // Light purple
+                cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                cell.setPadding(8);
+                pdfTable.addCell(cell);
+            }
+
+            // Add data rows
+            com.itextpdf.text.Font dataFont = new com.itextpdf.text.Font(com.itextpdf.text.Font.FontFamily.HELVETICA, 10, com.itextpdf.text.Font.NORMAL);
+            for (int row = 0; row < tableModel.getRowCount(); row++) {
+                for (int col = 0; col < tableModel.getColumnCount(); col++) {
+                    Object value = tableModel.getValueAt(row, col);
+                    String cellText = value != null ? value.toString() : "";
+
+                    com.itextpdf.text.pdf.PdfPCell cell = new com.itextpdf.text.pdf.PdfPCell(new com.itextpdf.text.Phrase(cellText, dataFont));
+                    cell.setPadding(5);
+
+                    // Alternate row colors
+                    if (row % 2 == 0) {
+                        cell.setBackgroundColor(new com.itextpdf.text.BaseColor(250, 250, 250));
+                    } else {
+                        cell.setBackgroundColor(com.itextpdf.text.BaseColor.WHITE);
+                    }
+
+                    // Align numeric columns to right
+                    if (col == 2 || col == 6) { // Total and Total Eco Score columns
+                        cell.setHorizontalAlignment(com.itextpdf.text.Element.ALIGN_RIGHT);
+                    }
+
+                    pdfTable.addCell(cell);
+                }
+            }
+
+            document.add(pdfTable);
+
+            // Add footer
+            com.itextpdf.text.Paragraph footer = new com.itextpdf.text.Paragraph("Total Records: " + tableModel.getRowCount(), dateFont);
+            footer.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
+            footer.setSpacingBefore(20);
+            document.add(footer);
+
+            document.close();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating PDF: " + e.getMessage(), e);
+        }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel lblTitle;
     // End of variables declaration//GEN-END:variables

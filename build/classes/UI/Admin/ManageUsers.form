@@ -27,7 +27,7 @@
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="Enterprise" linkSize="1" min="-2" pref="246" max="-2" attributes="0"/>
-                      <EmptySpace min="-2" pref="139" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="169" max="-2" attributes="0"/>
                       <Component id="Organization" linkSize="1" min="-2" pref="246" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="121" max="-2" attributes="0"/>
                       <Component id="Roles" linkSize="1" min="-2" pref="278" max="-2" attributes="0"/>

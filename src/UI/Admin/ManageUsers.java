@@ -20,6 +20,10 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -30,6 +34,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 
@@ -41,15 +47,22 @@ public class ManageUsers extends javax.swing.JPanel {
 
     private MainJFrame mainpage;
 
+    private Map<String, List<String>> enterpriseToOrganizations;
+    private Map<String, List<String>> organizationToRoles;
+    private List<Document> allEnterprises;
+    private List<Document> allOrganizations;
+    private List<Document> allRoles;
+
     /**
      * Creates new form AdminSplitPage
      */
     public ManageUsers(MainJFrame mainpage) {
         initComponents();
+
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(242, 236, 248)); // light lavender purple
 
-                // --- NORTH Panel ---
+        // --- NORTH Panel ---
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(getBackground());
         topPanel.setBorder(new EmptyBorder(10, 20, 10, 20));
@@ -84,8 +97,8 @@ public class ManageUsers extends javax.swing.JPanel {
         centerPanel.add(lblTitle, BorderLayout.NORTH);
 
         jTable1 = new JTable(new DefaultTableModel(
-            new Object[][]{},
-            new String[]{"User ID", "User Name", "Is Active", "Is Deleted"}
+                new Object[][]{},
+                new String[]{"User ID", "User Name", "Is Active", "Is Deleted"}
         ));
         styleTable(jTable1);
         centerPanel.add(new JScrollPane(jTable1), BorderLayout.CENTER);
@@ -114,9 +127,9 @@ public class ManageUsers extends javax.swing.JPanel {
         JPanel bottomPanel = new JPanel(new GridLayout(1, 3));
         bottomPanel.setBackground(getBackground());
 
-        jTable2 = createStyledTable("Enterprise List");
-        jTable4 = createStyledTable("Organization List");
-        jTable3 = createStyledTable("Roles List");
+        jTable2 = createStyledTable(new String[]{"Enterprise List"});
+        jTable4 = createStyledTable(new String[]{"Organization List"});
+        jTable3 = createStyledTable(new String[]{"Roles List"});
 
         bottomPanel.add(new JScrollPane(jTable2));
         bottomPanel.add(new JScrollPane(jTable4));
@@ -125,14 +138,200 @@ public class ManageUsers extends javax.swing.JPanel {
         add(bottomPanel, BorderLayout.SOUTH);
 
         populateUserTable();
+        initializeDataStructures();
+        // setupUI();
+        populateEnterpriseTable();
+        setupTableSelectionListeners();
     }
 
-    private JTable createStyledTable(String columnName) {
-        JTable table = new JTable(new DefaultTableModel(new Object[][]{}, new String[]{columnName}));
+    private void initializeDataStructures() {
+        enterpriseToOrganizations = new HashMap<>();
+        organizationToRoles = new HashMap<>();
+        allEnterprises = new ArrayList<>();
+        allOrganizations = new ArrayList<>();
+        allRoles = new ArrayList<>();
+        loadHierarchicalData();
+    }
+
+    private void loadHierarchicalData() {
+        try {
+            MongoDatabase db = Repository.MongoDBConnection.getDatabase();
+
+            // Load enterprises
+            MongoCollection<Document> enterpriseCollection = db.getCollection("enterprises");
+            for (Document doc : enterpriseCollection.find()) {
+                allEnterprises.add(doc);
+            }
+
+            // Load organizations
+            MongoCollection<Document> organizationCollection = db.getCollection("organizations");
+            for (Document doc : organizationCollection.find()) {
+                allOrganizations.add(doc);
+
+                // Build enterprise -> organization mapping
+                String enterpriseId = doc.getString("enterprise_id");
+                String organizationId = doc.getString("organization_id");
+
+                if (enterpriseId != null && organizationId != null) {
+                    enterpriseToOrganizations.computeIfAbsent(enterpriseId, k -> new ArrayList<>())
+                            .add(organizationId);
+                }
+            }
+
+            // Load roles
+            MongoCollection<Document> rolesCollection = db.getCollection("roles");
+            for (Document doc : rolesCollection.find()) {
+                allRoles.add(doc);
+
+                // Build organization -> roles mapping
+                String organizationId = doc.getString("organization_id");
+                String roleId = doc.getString("role_id");
+
+                if (organizationId != null && roleId != null) {
+                    organizationToRoles.computeIfAbsent(organizationId, k -> new ArrayList<>())
+                            .add(roleId);
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Error loading hierarchical data: " + e.getMessage(),
+                    "Database Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void setupTableSelectionListeners() {
+        // Enterprise table selection listener
+        jTable2.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    int selectedRow = jTable2.getSelectedRow();
+                    if (selectedRow >= 0) {
+                        String selectedEnterpriseName = jTable2.getValueAt(selectedRow, 0).toString();
+                        // Find enterprise ID by name
+                        String enterpriseId = findEnterpriseIdByName(selectedEnterpriseName);
+                        if (enterpriseId != null) {
+                            populateOrganizationTable(enterpriseId);
+                            clearRolesTable();
+                        }
+                    }
+                }
+            }
+        });
+
+        // Organization table selection listener
+        jTable4.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                if (!e.getValueIsAdjusting()) {
+                    int selectedRow = jTable4.getSelectedRow();
+                    if (selectedRow >= 0) {
+                        String selectedOrganizationName = jTable4.getValueAt(selectedRow, 0).toString();
+                        // Find organization ID by name
+                        String organizationId = findOrganizationIdByName(selectedOrganizationName);
+                        if (organizationId != null) {
+                            populateRolesTable(organizationId);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private String findEnterpriseIdByName(String enterpriseName) {
+        for (Document enterprise : allEnterprises) {
+            String name = enterprise.getString("enterprise_name");
+            if (enterpriseName.equals(name)) {
+                return enterprise.getString("enterprise_id");
+            }
+        }
+        return null;
+    }
+
+    private String findOrganizationIdByName(String organizationName) {
+        for (Document organization : allOrganizations) {
+            String name = organization.getString("organization_name");
+            if (organizationName.equals(name)) {
+                return organization.getString("organization_id");
+            }
+        }
+        return null;
+    }
+
+    private void clearOrganizationTable() {
+        DefaultTableModel model = (DefaultTableModel) jTable4.getModel();
+        model.setRowCount(0);
+    }
+
+    private void clearRolesTable() {
+        DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
+        model.setRowCount(0);
+    }
+
+    // Fixed: Create table with proper column structure
+    private JTable createStyledTable(String[] columnNames) {
+        JTable table = new JTable(new DefaultTableModel(new Object[][]{}, columnNames));
         styleTable(table);
         return table;
     }
 
+    private void populateEnterpriseTable() {
+        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+        model.setRowCount(0);
+
+        for (Document enterprise : allEnterprises) {
+            String enterpriseName = enterprise.getString("enterprise_name");
+            if (enterpriseName == null) {
+                enterpriseName = "N/A";
+            }
+            model.addRow(new Object[]{enterpriseName});
+        }
+    }
+
+    private void populateOrganizationTable(String enterpriseId) {
+        DefaultTableModel model = (DefaultTableModel) jTable4.getModel();
+        model.setRowCount(0);
+
+        List<String> organizationIds = enterpriseToOrganizations.get(enterpriseId);
+        if (organizationIds != null) {
+            for (String orgId : organizationIds) {
+                for (Document org : allOrganizations) {
+                    if (orgId.equals(org.getString("organization_id"))) {
+                        String organizationName = org.getString("organization_name");
+                        if (organizationName == null) {
+                            organizationName = "N/A";
+                        }
+                        model.addRow(new Object[]{organizationName});
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private void populateRolesTable(String organizationId) {
+        DefaultTableModel model = (DefaultTableModel) jTable3.getModel();
+        model.setRowCount(0);
+
+        List<String> roleIds = organizationToRoles.get(organizationId);
+        if (roleIds != null) {
+            for (String roleId : roleIds) {
+                for (Document role : allRoles) {
+                    if (roleId.equals(role.getString("role_id"))) {
+                        String roleName = role.getString("role_name");
+                        if (roleName == null) {
+                            roleName = "N/A";
+                        }
+                        model.addRow(new Object[]{roleName});
+                        break;
+                    }
+                }
+            }
+        }
+    }
 
     private void styleTable(JTable table) {
         table.setRowHeight(24);
@@ -147,6 +346,7 @@ public class ManageUsers extends javax.swing.JPanel {
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
             final Color evenRow = new Color(242, 235, 255);
             final Color oddRow = Color.WHITE;
+
             public Component getTableCellRendererComponent(JTable tbl, Object val, boolean sel, boolean foc, int row, int col) {
                 Component c = super.getTableCellRendererComponent(tbl, val, sel, foc, row, col);
                 c.setBackground(!sel ? (row % 2 == 0 ? evenRow : oddRow) : new Color(210, 190, 255));
@@ -157,6 +357,7 @@ public class ManageUsers extends javax.swing.JPanel {
             table.getColumnModel().getColumn(i).setCellRenderer(renderer);
         }
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -270,7 +471,7 @@ public class ManageUsers extends javax.swing.JPanel {
                         .addGap(448, 448, 448))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(Enterprise, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(139, 139, 139)
+                        .addGap(169, 169, 169)
                         .addComponent(Organization, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(121, 121, 121)
                         .addComponent(Roles, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
