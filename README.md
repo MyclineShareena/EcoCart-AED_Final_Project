@@ -10,23 +10,23 @@ This project was designed and implemented, meeting the complexity of an enterpri
 
 **Key Features:**
 
-**Role-Based Dashboards:**
+**1.Role-Based Dashboards:**
 
 Separate interfaces and workflows for Admin, Seller, Buyer, Eco Auditors, Shipping & Finance teams.
 
-**Eco-Certified Product Listings:**
+**2.Eco-Certified Product Listings:**
 
 Sellers submit product details, which are verified by external eco-auditors using pre-set sustainability metrics.
 
-**Carbon Emissions Tracking:**
+**3.Carbon Emissions Tracking:**
 
 Shipping coordinators log delivery paths and calculate emissions, enhancing buyer transparency.
 
-**Finance Approval Workflows:**
+**4.Finance Approval Workflows:**
 
 Seamless invoicing and payment processes between shipping accountants and seller accountants.
 
-**Customer Support Integration:**
+**5.Customer Support Integration:**
 
 Buyers can raise issues, and dedicated customer support roles manage responses.
 
