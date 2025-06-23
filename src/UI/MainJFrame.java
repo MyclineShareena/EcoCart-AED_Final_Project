@@ -69,38 +69,38 @@ public class MainJFrame extends javax.swing.JFrame {
 
         // EcoCart Logo
         ImgLogo.setIcon(new ImageIcon(getClass().getResource("/Images/logo.png")));
-        ImgLogo.setBounds(320, 70, 100, 50); // adjust size as needed
+        ImgLogo.setBounds(420, 90, 100, 50); // adjust size as needed
         rightpanel.add(ImgLogo);
 
         // "EcoCart" title
         lblTitle.setText("EcoCart");
         lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 28));
-        lblTitle.setBounds(360, 80, 100, 30);
+        lblTitle.setBounds(460, 100, 100, 30);
         rightpanel.add(lblTitle);
 
         // Login heading
         lbllogin.setText("Log In");
         lbllogin.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        lbllogin.setBounds(370, 130, 100, 30);
+        lbllogin.setBounds(470, 150, 100, 30);
         rightpanel.add(lbllogin);
 
         // Username
         lblUsername.setText("Username");
-        lblUsername.setBounds(250, 200, 100, 25);
-        txtUsername.setBounds(250, 225, 300, 35);
+        lblUsername.setBounds(350, 220, 100, 25);
+        txtUsername.setBounds(350, 245, 300, 35);
         rightpanel.add(lblUsername);
         rightpanel.add(txtUsername);
 
         // Password
         lblPassword.setText("Password");
-        lblPassword.setBounds(250, 275, 100, 25);
-        txtPassword.setBounds(250, 300, 300, 35);
+        lblPassword.setBounds(350, 295, 100, 25);
+        txtPassword.setBounds(350, 320, 300, 35);
         rightpanel.add(lblPassword);
         rightpanel.add(txtPassword);
 
         // Login button
         loginBTN.setText("Log In");
-        loginBTN.setBounds(250, 350, 300, 40);
+        loginBTN.setBounds(350, 370, 300, 40);
         loginBTN.setBackground(new Color(100, 150, 200));
         loginBTN.setForeground(Color.WHITE);
         loginBTN.setFont(new Font("Segoe UI", Font.BOLD, 14));
@@ -109,7 +109,7 @@ public class MainJFrame extends javax.swing.JFrame {
 
         // Sign up button
         signupBTN.setText("Sign Up");
-        signupBTN.setBounds(250, 400, 300, 40);
+        signupBTN.setBounds(350, 420, 300, 40);
         signupBTN.setBackground(Color.LIGHT_GRAY);
         signupBTN.setFont(new Font("Segoe UI", Font.BOLD, 14));
         signupBTN.setFocusPainted(false);
@@ -159,7 +159,9 @@ public class MainJFrame extends javax.swing.JFrame {
         leftpanel.setLayout(leftpanelLayout);
         leftpanelLayout.setHorizontalGroup(
             leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(Mainpic, javax.swing.GroupLayout.PREFERRED_SIZE, 757, Short.MAX_VALUE)
+            .addGroup(leftpanelLayout.createSequentialGroup()
+                .addComponent(Mainpic, javax.swing.GroupLayout.PREFERRED_SIZE, 929, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         leftpanelLayout.setVerticalGroup(
             leftpanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

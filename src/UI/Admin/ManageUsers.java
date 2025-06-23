@@ -98,7 +98,7 @@ public class ManageUsers extends javax.swing.JPanel {
 
         jTable1 = new JTable(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"User ID", "User Name", "Is Active", "Is Deleted"}
+                new String[]{"User ID", "User Name", "Name", "Mobile", "Is Active"}
         ));
         styleTable(jTable1);
         centerPanel.add(new JScrollPane(jTable1), BorderLayout.CENTER);
@@ -116,6 +116,7 @@ public class ManageUsers extends javax.swing.JPanel {
         btnDelete.setBackground(new Color(195, 170, 255));
         btnDelete.setForeground(Color.BLACK);
         btnDelete.setFocusPainted(false);
+        btnDelete.addActionListener(this::btnDeleteActionPerformed);
 
         actionPanel.add(btnUpdate);
         actionPanel.add(btnDelete);
@@ -136,7 +137,7 @@ public class ManageUsers extends javax.swing.JPanel {
         bottomPanel.add(new JScrollPane(jTable3));
 
         add(bottomPanel, BorderLayout.SOUTH);
-
+        setupEditableColumns();
         populateUserTable();
         initializeDataStructures();
         // setupUI();
@@ -387,13 +388,13 @@ public class ManageUsers extends javax.swing.JPanel {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "User Id ", "User Name", "Is Active ", "Is Deleted"
+                "User Id ", "User Name", "Name", "mobile", "Is Active "
             }
         ));
         jScrollPane1.setViewportView(jTable1);
@@ -445,6 +446,11 @@ public class ManageUsers extends javax.swing.JPanel {
         Organization.setViewportView(jTable4);
 
         btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
 
         BackBTN.setText("Back");
         BackBTN.addActionListener(new java.awt.event.ActionListener() {
@@ -479,7 +485,7 @@ public class ManageUsers extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addGap(107, 107, 107)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 973, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1037, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(BackBTN, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -531,25 +537,70 @@ public class ManageUsers extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnUpdateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateActionPerformed
-        // TODO add your handling code here:
         int selectedRow = jTable1.getSelectedRow();
         if (selectedRow == -1) {
             javax.swing.JOptionPane.showMessageDialog(this, "Please select a row to update.");
             return;
         }
 
-        String userId = jTable1.getValueAt(selectedRow, 0).toString();
-        boolean isActive = Boolean.parseBoolean(jTable1.getValueAt(selectedRow, 2).toString());
-        boolean isDeleted = Boolean.parseBoolean(jTable1.getValueAt(selectedRow, 3).toString());
+        // Stop any current editing to get the latest values
+        if (jTable1.isEditing()) {
+            jTable1.getCellEditor().stopCellEditing();
+        }
 
-        MongoDatabase db = Repository.MongoDBConnection.getDatabase();
-        MongoCollection<Document> userCollection = db.getCollection("users");
+        try {
+            String userId = jTable1.getValueAt(selectedRow, 0).toString();
+            String userName = jTable1.getValueAt(selectedRow, 1).toString();
+            String name = jTable1.getValueAt(selectedRow, 2).toString();
+            String mobile = jTable1.getValueAt(selectedRow, 3).toString();
+            boolean isActive = Boolean.parseBoolean(jTable1.getValueAt(selectedRow, 4).toString());
+            // Note: is_deleted (column 5) is NOT included in updates
 
-        Bson filter = eq("userId", userId);
-        Bson updates = new Document("$set", new Document("is_active", isActive).append("is_deleted", isDeleted));
-        userCollection.updateOne(filter, updates);
+            // Confirmation dialog
+            int confirm = javax.swing.JOptionPane.showConfirmDialog(
+                    this,
+                    "Update user information?\n\n"
+                    + "User ID: " + userId + "\n"
+                    + "Username: " + userName + "\n"
+                    + "Name: " + name + "\n"
+                    + "Mobile: " + mobile + "\n"
+                    + "Is Active: " + isActive,
+                    "Confirm Update",
+                    javax.swing.JOptionPane.YES_NO_OPTION,
+                    javax.swing.JOptionPane.QUESTION_MESSAGE
+            );
 
-        javax.swing.JOptionPane.showMessageDialog(this, "✅ User updated successfully!");
+            if (confirm != javax.swing.JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            MongoDatabase db = Repository.MongoDBConnection.getDatabase();
+            MongoCollection<Document> userCollection = db.getCollection("users");
+
+            // Fixed filter field name and only update editable fields
+            Bson filter = eq("user_id", userId); // Changed from "userId" to "user_id"
+            Bson updates = new Document("$set", new Document("username", userName)
+                    .append("name", name)
+                    .append("mobile", mobile)
+                    .append("is_active", isActive));
+            // is_deleted is NOT updated
+
+            long modifiedCount = userCollection.updateOne(filter, updates).getModifiedCount();
+
+            if (modifiedCount > 0) {
+                javax.swing.JOptionPane.showMessageDialog(this, "✅ User updated successfully!");
+                populateUserTable();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "❌ No user was updated. User may not exist.");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "❌ Error updating user: " + e.getMessage(),
+                    "Database Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
         populateUserTable();
     }//GEN-LAST:event_btnUpdateActionPerformed
 
@@ -559,6 +610,91 @@ public class ManageUsers extends javax.swing.JPanel {
         mainpage.invalidate();
         mainpage.validate();
     }//GEN-LAST:event_BackBTNActionPerformed
+
+    private void setupEditableColumns() {
+        // Make table editable for specific columns only
+        jTable1.setModel(new DefaultTableModel(
+                new Object[][]{},
+                new String[]{"User ID", "User Name", "Name", "Mobile", "Is Active"}
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Only allow editing of Name (column 2), Mobile (column 3), and Is Active (column 4)
+                return column == 2 || column == 3 || column == 4;
+            }
+
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                // Set proper column types for proper editing
+                if (columnIndex == 4 || columnIndex == 5) { // Is Active and Is Deleted columns
+                    return Boolean.class;
+                }
+                return String.class;
+            }
+        });
+    }
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        // TODO add your handling code here:
+        int selectedRow = jTable1.getSelectedRow();
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Please select a user to delete.");
+            return;
+        }
+
+        String userId = jTable1.getValueAt(selectedRow, 0).toString();
+        String userName = jTable1.getValueAt(selectedRow, 1).toString();
+
+        // Confirmation dialog
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to delete this user?\n\n"
+                + "User ID: " + userId + "\n"
+                + "Username: " + userName + "\n\n"
+                + "This action cannot be undone!",
+                "Confirm Delete User",
+                javax.swing.JOptionPane.YES_NO_OPTION,
+                javax.swing.JOptionPane.WARNING_MESSAGE
+        );
+
+        if (confirm != javax.swing.JOptionPane.YES_OPTION) {
+            return;
+        }
+
+        try {
+            MongoDatabase db = Repository.MongoDBConnection.getDatabase();
+            MongoCollection<Document> userCollection = db.getCollection("users");
+
+            // Delete the user document
+            Bson filter = eq("user_id", userId);
+            long deletedCount = userCollection.deleteOne(filter).getDeletedCount();
+
+            if (deletedCount > 0) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "✅ User deleted successfully!\n"
+                        + "User ID: " + userId + "\n"
+                        + "Username: " + userName,
+                        "Delete Successful",
+                        javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+                // Refresh the table
+                populateUserTable();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "❌ No user was deleted. User may not exist.",
+                        "Delete Failed",
+                        javax.swing.JOptionPane.WARNING_MESSAGE);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "❌ Error deleting user: " + e.getMessage(),
+                    "Database Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+
+    }//GEN-LAST:event_btnDeleteActionPerformed
     private void populateUserTable() {
         MongoDatabase db = Repository.MongoDBConnection.getDatabase();
         MongoCollection<Document> userCollection = db.getCollection("users");
@@ -570,8 +706,9 @@ public class ManageUsers extends javax.swing.JPanel {
             model.addRow(new Object[]{
                 doc.getString("user_id"),
                 doc.getString("username"),
+                doc.getString("name"), // Make sure this field name matches your DB
+                doc.getString("mobile"), // Make sure this field name matches your DB
                 doc.getBoolean("is_active"),
-                doc.getBoolean("is_deleted")
             });
         }
     }

@@ -30,6 +30,9 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.JComboBox;
+import javax.swing.DefaultCellEditor;
 
 /**
  *
@@ -39,6 +42,7 @@ public class SupportPage extends javax.swing.JPanel {
 
     MainJFrame mainpage;
     String userId;
+    private String[] statusOptions = {"Open", "In Progress", "Resolved", "Closed"};
 
     /**
      * Creates new form Customersupport
@@ -47,7 +51,7 @@ public class SupportPage extends javax.swing.JPanel {
         initComponents();
         this.userId = userId;
         this.mainpage = mainpage;
-        
+
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(255, 240, 245)); // light pink background
 
@@ -87,6 +91,7 @@ public class SupportPage extends javax.swing.JPanel {
                 new String[]{"Order ID", "Product Name", "Description", "Order Status", "Order Date", "Issue Type"}
         ));
         styleTable(viewEditTbl);
+        setupDropdownColumn(viewEditTbl); // Add dropdown functionality
         JScrollPane scrollPane = new JScrollPane(viewEditTbl);
         scrollPane.setBorder(new EmptyBorder(0, 20, 10, 20));
 
@@ -96,12 +101,20 @@ public class SupportPage extends javax.swing.JPanel {
         respondBtn.setForeground(Color.WHITE);
         respondBtn.setFocusPainted(false);
         respondBtn.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
-        respondBtn.addActionListener(this::jButton1ActionPerformed);
+        respondBtn.addActionListener(this::respondBtnActionPerformed);
+
+        JButton updateBtn = new JButton("Update Status");
+        updateBtn.setBackground(new Color(34, 139, 34)); // Forest Green
+        updateBtn.setForeground(Color.WHITE);
+        updateBtn.setFocusPainted(false);
+        updateBtn.setBorder(BorderFactory.createEmptyBorder(10, 30, 10, 30));
+        updateBtn.addActionListener(this::UpdatebtnActionPerformed);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         buttonPanel.setBackground(getBackground());
         buttonPanel.setBorder(new EmptyBorder(10, 30, 10, 30));
         buttonPanel.add(respondBtn);
+        buttonPanel.add(updateBtn);
 
         JPanel northPanel = new JPanel(new BorderLayout());
         northPanel.setBackground(getBackground());
@@ -113,6 +126,18 @@ public class SupportPage extends javax.swing.JPanel {
         add(buttonPanel, BorderLayout.SOUTH);
 
         populateTable();
+    }
+
+    private void setupDropdownColumn(JTable table) {
+        // Create JComboBox with status options
+        JComboBox<String> statusComboBox = new JComboBox<>(statusOptions);
+        
+        // Set the editor for the Order Status column (index 3)
+        TableColumn statusColumn = table.getColumnModel().getColumn(3);
+        statusColumn.setCellEditor(new DefaultCellEditor(statusComboBox));
+        
+        // Optional: Set preferred width for the status column
+        statusColumn.setPreferredWidth(120);
     }
 
     private void styleTable(JTable table) {
@@ -137,10 +162,14 @@ public class SupportPage extends javax.swing.JPanel {
             }
         };
 
+        // Apply renderer to all columns except the status column (which has dropdown)
         for (int i = 0; i < table.getColumnCount(); i++) {
-            table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+            if (i != 3) { // Skip the Order Status column
+                table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+            }
         }
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -156,7 +185,8 @@ public class SupportPage extends javax.swing.JPanel {
         LogoutBTN = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         viewEditTbl = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        Updatebtn = new javax.swing.JButton();
+        respondBtn = new javax.swing.JButton();
 
         lblTitle.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
         lblTitle.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -187,10 +217,17 @@ public class SupportPage extends javax.swing.JPanel {
         viewEditTbl.setToolTipText("");
         jScrollPane1.setViewportView(viewEditTbl);
 
-        jButton1.setText("Send Response");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        Updatebtn.setText("Update");
+        Updatebtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                UpdatebtnActionPerformed(evt);
+            }
+        });
+
+        respondBtn.setText("Send Response");
+        respondBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                respondBtnActionPerformed(evt);
             }
         });
 
@@ -206,14 +243,16 @@ public class SupportPage extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(lblTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(66, 66, 66)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(278, 278, 278)
                         .addComponent(lblTitleReview, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(342, 342, 342)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(66, 66, 66)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(respondBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(465, 465, 465)
+                                .addComponent(Updatebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 735, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(66, 66, 66))
         );
         layout.setVerticalGroup(
@@ -227,9 +266,11 @@ public class SupportPage extends javax.swing.JPanel {
                 .addComponent(lblTitleReview, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(65, 65, 65)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(76, 76, 76)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(Updatebtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(respondBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(99, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -240,7 +281,75 @@ public class SupportPage extends javax.swing.JPanel {
         new MainJFrame().setVisible(true);
     }//GEN-LAST:event_LogoutBTNActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void UpdatebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UpdatebtnActionPerformed
+        // Stop any current editing to get the latest value
+        if (viewEditTbl.isEditing()) {
+            viewEditTbl.getCellEditor().stopCellEditing();
+        }
+
+        int selectedRow = viewEditTbl.getSelectedRow();
+
+        if (selectedRow == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Please select a record from the table to update status.");
+            return;
+        }
+
+        try {
+            String orderId = viewEditTbl.getValueAt(selectedRow, 0).toString();
+            String newStatus = viewEditTbl.getValueAt(selectedRow, 3).toString();
+
+            // Confirm the update
+            int confirm = javax.swing.JOptionPane.showConfirmDialog(
+                    this,
+                    "Update Order Status?\n\nOrder ID: " + orderId + "\nNew Status: " + newStatus,
+                    "Confirm Update",
+                    javax.swing.JOptionPane.YES_NO_OPTION,
+                    javax.swing.JOptionPane.QUESTION_MESSAGE
+            );
+
+            if (confirm != javax.swing.JOptionPane.YES_OPTION) {
+                return;
+            }
+
+            // Update database
+            MongoDatabase db = MongoDBConnection.getDatabase();
+            MongoCollection<Document> issueCollection = db.getCollection("customerIssue");
+
+            // Update the order status in the database
+            Document filter = new Document("order_id", orderId);
+            Document update = new Document("$set", new Document("order_status", newStatus));
+
+            long modifiedCount = issueCollection.updateOne(filter, update).getModifiedCount();
+
+            if (modifiedCount > 0) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "✅ Order status updated successfully!\n"
+                        + "Order ID: " + orderId + "\n"
+                        + "New Status: " + newStatus,
+                        "Update Successful",
+                        javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+                // Refresh the table to show updated data
+                populateTable();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "❌ No records were updated. Please check if the order exists.",
+                        "Update Failed",
+                        javax.swing.JOptionPane.WARNING_MESSAGE);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "❌ Error updating order status: " + e.getMessage(),
+                    "Database Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+
+    }//GEN-LAST:event_UpdatebtnActionPerformed
+
+    private void respondBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_respondBtnActionPerformed
         // TODO add your handling code here:
         int selectedRow = viewEditTbl.getSelectedRow();
 
@@ -327,7 +436,7 @@ public class SupportPage extends javax.swing.JPanel {
 
         responseDialog.add(panel);
         responseDialog.setVisible(true);
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_respondBtnActionPerformed
 
     private void populateTable() {
         try {
@@ -347,11 +456,16 @@ public class SupportPage extends javax.swing.JPanel {
                 Object orderDate = doc.get("order_date");
                 Object issueType = doc.get("issue_type");
 
+                // Set default status if null or empty
+                String statusValue = (status != null && !status.toString().trim().isEmpty())
+                        ? status.toString()
+                        : "Open"; // Default value
+
                 model.addRow(new Object[]{
                     orderId != null ? orderId.toString() : "",
                     productName != null ? productName.toString() : "",
                     description != null ? description.toString() : "",
-                    status != null ? status.toString() : "",
+                    statusValue, // Use statusValue instead of status
                     orderDate != null ? orderDate.toString() : "",
                     issueType != null ? issueType.toString() : ""
                 });
@@ -367,10 +481,11 @@ public class SupportPage extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton LogoutBTN;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton Updatebtn;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblTitle;
     private javax.swing.JLabel lblTitleReview;
+    private javax.swing.JButton respondBtn;
     private javax.swing.JTable viewEditTbl;
     // End of variables declaration//GEN-END:variables
 }

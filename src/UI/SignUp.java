@@ -44,9 +44,9 @@ public class SignUp extends javax.swing.JPanel {
         JPanel cardPanel = new JPanel();
         cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
         cardPanel.setBackground(Color.WHITE);
-        cardPanel.setPreferredSize(new Dimension(360, 400));
-        cardPanel.setMaximumSize(new Dimension(360, 400));
-        cardPanel.setBorder(BorderFactory.createEmptyBorder(30, 70, 150, 70)); // padding
+        cardPanel.setPreferredSize(new Dimension(400, 580)); // Increased height for more fields
+        cardPanel.setMaximumSize(new Dimension(400, 580));
+        cardPanel.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100)); // Reduced padding
 
         // === Header ===
         JLabel lblTitle = new JLabel("EcoCart");
@@ -64,7 +64,7 @@ public class SignUp extends javax.swing.JPanel {
         lblUsername.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         txtUsername = new JTextField();
-        txtUsername.setMaximumSize(new Dimension(250, 30));
+        txtUsername.setMaximumSize(new Dimension(300, 30));
         txtUsername.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // === Password ===
@@ -73,8 +73,35 @@ public class SignUp extends javax.swing.JPanel {
         lblPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         txtPassword = new JPasswordField();
-        txtPassword.setMaximumSize(new Dimension(250, 30));
+        txtPassword.setMaximumSize(new Dimension(300, 30));
         txtPassword.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // === Name ===
+        JLabel lblName = new JLabel("Full Name");
+        lblName.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblName.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        txtName = new JTextField();
+        txtName.setMaximumSize(new Dimension(300, 30));
+        txtName.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // === Email ===
+        JLabel lblEmail = new JLabel("Email");
+        lblEmail.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblEmail.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        txtEmail = new JTextField();
+        txtEmail.setMaximumSize(new Dimension(250, 30));
+        txtEmail.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // === Mobile ===
+        JLabel lblMobile = new JLabel("Mobile Number");
+        lblMobile.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        lblMobile.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        txtMobile = new JTextField();
+        txtMobile.setMaximumSize(new Dimension(300, 30));
+        txtMobile.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // === Role ===
         JLabel lblRole = new JLabel("Select Role");
@@ -82,7 +109,7 @@ public class SignUp extends javax.swing.JPanel {
         lblRole.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         cmbRole = new JComboBox<>();
-        cmbRole.setMaximumSize(new Dimension(250, 30));
+        cmbRole.setMaximumSize(new Dimension(300, 30));
         cmbRole.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         // === Buttons ===
@@ -91,33 +118,56 @@ public class SignUp extends javax.swing.JPanel {
         btnSignup.setForeground(Color.WHITE);
         btnSignup.setFocusPainted(false);
         btnSignup.setAlignmentX(Component.LEFT_ALIGNMENT);
-        btnSignup.addActionListener(evt -> btnSignupActionPerformed(evt)); //  Action listener here
+        btnSignup.addActionListener(evt -> btnSignupActionPerformed(evt));
 
         backBTN = new JButton("Back");
         backBTN.setAlignmentX(Component.LEFT_ALIGNMENT);
-        backBTN.addActionListener(evt -> backBTNActionPerformed(evt)); //  Action listener here
+        backBTN.addActionListener(evt -> backBTNActionPerformed(evt));
 
         // === Add to cardPanel ===
         cardPanel.add(lblTitle);
         cardPanel.add(Box.createVerticalStrut(4));
         cardPanel.add(lblSub);
-        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(Box.createVerticalStrut(15));
+
+        // Username
         cardPanel.add(lblUsername);
         cardPanel.add(txtUsername);
-        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(Box.createVerticalStrut(8));
+
+        // Password
         cardPanel.add(lblPassword);
         cardPanel.add(txtPassword);
-        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(Box.createVerticalStrut(8));
+
+        // Name (ADDED)
+        cardPanel.add(lblName);
+        cardPanel.add(txtName);
+        cardPanel.add(Box.createVerticalStrut(8));
+
+        // Email (ADDED)
+        cardPanel.add(lblEmail);
+        cardPanel.add(txtEmail);
+        cardPanel.add(Box.createVerticalStrut(8));
+
+        // Mobile (ADDED)
+        cardPanel.add(lblMobile);
+        cardPanel.add(txtMobile);
+        cardPanel.add(Box.createVerticalStrut(8));
+
+        // Role
         cardPanel.add(lblRole);
         cardPanel.add(cmbRole);
-        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(Box.createVerticalStrut(15));
+
+        // Buttons
         cardPanel.add(btnSignup);
-        cardPanel.add(Box.createVerticalStrut(10));
+        cardPanel.add(Box.createVerticalStrut(8));
         cardPanel.add(backBTN);
 
         add(cardPanel);
 
-        loadRolesIntoDropdown(); //  This stays last
+        loadRolesIntoDropdown();
     }
 
     /**
@@ -139,6 +189,14 @@ public class SignUp extends javax.swing.JPanel {
         lblPassword = new javax.swing.JLabel();
         txtUsername = new javax.swing.JTextField();
         txtPassword = new javax.swing.JTextField();
+        lblemail = new javax.swing.JLabel();
+        txtName = new javax.swing.JTextField();
+        lblPassword2 = new javax.swing.JLabel();
+        txtEmail = new javax.swing.JTextField();
+        lblemail1 = new javax.swing.JLabel();
+        lblemail2 = new javax.swing.JLabel();
+        lblemail3 = new javax.swing.JLabel();
+        txtMobile = new javax.swing.JTextField();
 
         btnSignup.setText("Sign Up");
         btnSignup.addActionListener(new java.awt.event.ActionListener() {
@@ -181,34 +239,72 @@ public class SignUp extends javax.swing.JPanel {
             }
         });
 
+        lblemail.setText("Email");
+
+        txtName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNameActionPerformed(evt);
+            }
+        });
+
+        txtEmail.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEmailActionPerformed(evt);
+            }
+        });
+
+        lblemail1.setText("Name");
+
+        lblemail3.setText("Mobile");
+
+        txtMobile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtMobileActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addGap(235, 235, 235)
+                .addComponent(btnSignup, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
                 .addGap(194, 194, 194)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(lblSignup, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(161, 161, 161)
                         .addComponent(backBTN)
                         .addGap(24, 24, 24))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(lblUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblRole, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(lblPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblPassword2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblemail1, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblemail, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cmbRole, 0, 188, Short.MAX_VALUE)
+                            .addComponent(txtUsername)
+                            .addComponent(txtPassword)
+                            .addComponent(txtName)
+                            .addComponent(txtEmail, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addContainerGap(350, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(lblUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(lblRole, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(lblPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(35, 35, 35)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(cmbRole, 0, 160, Short.MAX_VALUE)
-                                    .addComponent(txtUsername)
-                                    .addComponent(txtPassword)))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(55, 55, 55)
-                                .addComponent(btnSignup, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(175, 175, 175))))
+                                .addComponent(lblemail3, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtMobile))
+                            .addComponent(lblemail2, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(350, 350, 350))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -229,20 +325,53 @@ public class SignUp extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmbRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblRole))
-                .addGap(33, 33, 33)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblemail1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblPassword2)
+                    .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblemail))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblemail2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblemail3)
+                    .addComponent(txtMobile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
                 .addComponent(btnSignup)
-                .addContainerGap(170, Short.MAX_VALUE))
+                .addGap(61, 61, 61))
         );
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSignupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSignupActionPerformed
-        // TODO add your handling code here:
+
         String username = txtUsername.getText().trim();
         String password = txtPassword.getText().trim();
-        String selectedRoleName = (String) cmbRole.getSelectedItem();  // Role selected
+        String name = txtName.getText().trim();
+        String email = txtEmail.getText().trim();
+        String mobile = txtMobile.getText().trim();
 
-        if (username.isEmpty() || password.isEmpty() || selectedRoleName == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "❗ Please fill all fields and select a role!");
+        String selectedRoleName = (String) cmbRole.getSelectedItem();
+
+        // Validate all required fields
+        if (username.isEmpty() || password.isEmpty() || name.isEmpty()
+                || email.isEmpty() || mobile.isEmpty() || selectedRoleName == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Please fill all fields and select a role!");
+            return;
+        }
+
+        // Basic email validation
+        if (!email.contains("@") || !email.contains(".")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Please enter a valid email address!");
+            return;
+        }
+
+        // Basic mobile validation (assuming 10 digits)
+        if (!mobile.matches("\\d{10}")) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Please enter a valid 10-digit mobile number!");
             return;
         }
 
@@ -254,7 +383,21 @@ public class SignUp extends javax.swing.JPanel {
             // Check if username already exists
             Document existingUser = userCollection.find(new Document("username", username)).first();
             if (existingUser != null) {
-                javax.swing.JOptionPane.showMessageDialog(this, "❗ Username already exists! Try another username.");
+                javax.swing.JOptionPane.showMessageDialog(this, "Username already exists! Try another username.");
+                return;
+            }
+
+            // Check if email already exists
+            Document existingEmail = userCollection.find(new Document("email", email)).first();
+            if (existingEmail != null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Email already exists! Try another email address.");
+                return;
+            }
+
+            // Check if mobile number already exists
+            Document existingMobile = userCollection.find(new Document("mobile", mobile)).first();
+            if (existingMobile != null) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Mobile number already exists! Try another mobile number.");
                 return;
             }
 
@@ -265,19 +408,28 @@ public class SignUp extends javax.swing.JPanel {
             if (roleDoc != null) {
                 String roleId = roleDoc.getString("role_id");
 
-                // Insert new user
+                // Insert new user with all fields
                 Document newUser = new Document("user_id", generateUniqueUserId())
                         .append("username", username)
                         .append("password", password)
-                        .append("role_id", roleId);
+                        .append("name", name)
+                        .append("email", email)
+                        .append("mobile", mobile)
+                        .append("role_id", roleId)
+                        .append("is_active", true)
+                        .append("is_deleted", false)
+                        .append("created_date", new java.util.Date());
 
                 userCollection.insertOne(newUser);
 
-                javax.swing.JOptionPane.showMessageDialog(this, " User Registered Successfully!");
+                javax.swing.JOptionPane.showMessageDialog(this, "User Registered Successfully!");
 
                 // Clear fields after success
                 txtUsername.setText("");
                 txtPassword.setText("");
+                txtName.setText("");
+                txtEmail.setText("");
+                txtMobile.setText("");
                 cmbRole.setSelectedIndex(0);
 
                 // (Optional) After success, go back to Login page
@@ -285,10 +437,10 @@ public class SignUp extends javax.swing.JPanel {
                 new MainJFrame().setVisible(true);
 
             } else {
-                javax.swing.JOptionPane.showMessageDialog(this, "❗ Selected role does not exist!");
+                javax.swing.JOptionPane.showMessageDialog(this, "Selected role does not exist!");
             }
         } else {
-            javax.swing.JOptionPane.showMessageDialog(this, " Database connection failed!");
+            javax.swing.JOptionPane.showMessageDialog(this, "Database connection failed!");
         }
     }//GEN-LAST:event_btnSignupActionPerformed
 
@@ -314,6 +466,18 @@ public class SignUp extends javax.swing.JPanel {
     private void txtPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPasswordActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtPasswordActionPerformed
+
+    private void txtNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNameActionPerformed
+
+    private void txtEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEmailActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEmailActionPerformed
+
+    private void txtMobileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtMobileActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMobileActionPerformed
 
     public void loadRolesIntoDropdown() {
         MongoDatabase db = MongoDBConnection.getDatabase();
@@ -343,9 +507,17 @@ public class SignUp extends javax.swing.JPanel {
     private javax.swing.JComboBox<String> cmbRole;
     private javax.swing.JSlider jSlider1;
     private javax.swing.JLabel lblPassword;
+    private javax.swing.JLabel lblPassword2;
     private javax.swing.JLabel lblRole;
     private javax.swing.JLabel lblSignup;
     private javax.swing.JLabel lblUsername;
+    private javax.swing.JLabel lblemail;
+    private javax.swing.JLabel lblemail1;
+    private javax.swing.JLabel lblemail2;
+    private javax.swing.JLabel lblemail3;
+    private javax.swing.JTextField txtEmail;
+    private javax.swing.JTextField txtMobile;
+    private javax.swing.JTextField txtName;
     private javax.swing.JTextField txtPassword;
     private javax.swing.JTextField txtUsername;
     // End of variables declaration//GEN-END:variables

@@ -246,8 +246,8 @@ public class SellerAccountant extends javax.swing.JPanel {
         // Get the internal MongoDB _id from a hidden column or stored value
         ObjectId documentId = (ObjectId) model.getValueAt(selectedRow, 0);  // Assuming _id is at column 0 and stored as ObjectId
 
-        String paymentMode = model.getValueAt(selectedRow, 5).toString();
-        String status = model.getValueAt(selectedRow, 6).toString();
+        String paymentMode = model.getValueAt(selectedRow, 6).toString();
+        String status = model.getValueAt(selectedRow, 7).toString();
 
         if (!status.equals("Paid")) {
             JOptionPane.showMessageDialog(this, "Please mark the status as 'Paid' before submitting payment.");
@@ -273,21 +273,21 @@ public class SellerAccountant extends javax.swing.JPanel {
     private void loadUnpaidShippingInvoices() {
         MongoDatabase db = MongoDBConnection.getDatabase();
         MongoCollection<Document> financials = db.getCollection("ShippingFinancials");
-        MongoCollection<Document> users = db.getCollection("users");
-
-        // Get seller ID for this accountant
-        Document userDoc = users.find(new Document("user_id", accountantUserId).append("is_active", true)).first();
-        if (userDoc == null || !userDoc.containsKey("parent_seller_id")) {
-            JOptionPane.showMessageDialog(this, "Seller ID not found for this accountant.");
-            return;
-        }
-
-        String sellerId = userDoc.getString("parent_seller_id");
+//        MongoCollection<Document> users = db.getCollection("users");
+//
+//        // Get seller ID for this accountant
+//        Document userDoc = users.find(new Document("user_id", accountantUserId).append("is_active", true)).first();
+//        if (userDoc == null || !userDoc.containsKey("parent_seller_id")) {
+//            JOptionPane.showMessageDialog(this, "Seller ID not found for this accountant.");
+//            return;
+//        }
+//
+//        String sellerId = userDoc.getString("parent_seller_id");
 
         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
         model.setRowCount(0); // clear table first
 
-        for (Document doc : financials.find(new Document("status", "Pending").append("seller_id", sellerId))) {
+        for (Document doc : financials.find(new Document("status", "Pending"))) {
             model.addRow(new Object[]{
                 doc.getObjectId("_id"),
                 doc.getString("order_id"),
@@ -302,10 +302,10 @@ public class SellerAccountant extends javax.swing.JPanel {
 
         // Set dropdowns
         JComboBox<String> paymentCombo = new JComboBox<>(new String[]{"Cash", "Card", "Cheque"});
-        jTable1.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(paymentCombo));
+        jTable1.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(paymentCombo));
 
         JComboBox<String> statusCombo = new JComboBox<>(new String[]{"Pending", "Paid"});
-        jTable1.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(statusCombo));
+        jTable1.getColumnModel().getColumn(7).setCellEditor(new DefaultCellEditor(statusCombo));
     }
 
 

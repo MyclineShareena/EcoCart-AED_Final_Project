@@ -62,13 +62,13 @@ public class AuditorDashboard extends javax.swing.JPanel {
         titlePanel.setBorder(new EmptyBorder(10, 20, 0, 20));
         titlePanel.add(lblTitle, BorderLayout.CENTER);
         titlePanel.add(btnLogout, BorderLayout.WEST);
-        
+
         // Subtitle
         JLabel lblSubtitle = new JLabel("Review & Score Product", SwingConstants.CENTER);
         lblSubtitle.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        lblSubtitle.setForeground(new Color(0, 102, 102));   
+        lblSubtitle.setForeground(new Color(0, 102, 102));
 
-         JPanel subtitlePanel = new JPanel(new BorderLayout());
+        JPanel subtitlePanel = new JPanel(new BorderLayout());
         subtitlePanel.setBackground(getBackground());
         subtitlePanel.add(lblSubtitle, BorderLayout.CENTER);
         subtitlePanel.setBorder(new EmptyBorder(0, 0, 10, 0));
@@ -103,11 +103,11 @@ public class AuditorDashboard extends javax.swing.JPanel {
         table.setRowHeight(25);
         table.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         table.setGridColor(new Color(180, 238, 238));
-        table.setSelectionBackground(new Color(204, 255, 255));
-
+        table.setSelectionBackground(new Color(173, 216, 230)); // Light Blue
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer() {
+            
             final Color evenRow = new Color(235, 255, 255);
-            final Color oddRow = Color.WHITE;
+            final Color oddRow = Color.BLACK;
 
             public Component getTableCellRendererComponent(JTable tbl, Object val, boolean sel, boolean foc, int row, int col) {
                 Component c = super.getTableCellRendererComponent(tbl, val, sel, foc, row, col);
@@ -140,10 +140,10 @@ public class AuditorDashboard extends javax.swing.JPanel {
         MongoDatabase db = MongoDBConnection.getDatabase();
         MongoCollection<Document> productCollection = db.getCollection("products");
 
-        for (Document doc :  productCollection.find(
-        Filters.and(
-            Filters.eq("is_audit", true),
-            Filters.eq("ecoscore", 0)))) {
+        for (Document doc : productCollection.find(
+                Filters.and(
+                        Filters.eq("is_audit", true),
+                        Filters.eq("ecoscore", 0)))) {
             model.addRow(new Object[]{
                 doc.getString("product_id"),
                 doc.getString("product_name"),
