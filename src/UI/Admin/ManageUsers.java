@@ -588,16 +588,16 @@ public class ManageUsers extends javax.swing.JPanel {
             long modifiedCount = userCollection.updateOne(filter, updates).getModifiedCount();
 
             if (modifiedCount > 0) {
-                javax.swing.JOptionPane.showMessageDialog(this, "✅ User updated successfully!");
+                javax.swing.JOptionPane.showMessageDialog(this, "User updated successfully!");
                 populateUserTable();
             } else {
-                javax.swing.JOptionPane.showMessageDialog(this, "❌ No user was updated. User may not exist.");
+                javax.swing.JOptionPane.showMessageDialog(this, "No user was updated. User may not exist.");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "❌ Error updating user: " + e.getMessage(),
+                    "Error updating user: " + e.getMessage(),
                     "Database Error",
                     javax.swing.JOptionPane.ERROR_MESSAGE);
         }
@@ -671,7 +671,7 @@ public class ManageUsers extends javax.swing.JPanel {
 
             if (deletedCount > 0) {
                 javax.swing.JOptionPane.showMessageDialog(this,
-                        "✅ User deleted successfully!\n"
+                        "User deleted successfully!\n"
                         + "User ID: " + userId + "\n"
                         + "Username: " + userName,
                         "Delete Successful",
@@ -681,7 +681,7 @@ public class ManageUsers extends javax.swing.JPanel {
                 populateUserTable();
             } else {
                 javax.swing.JOptionPane.showMessageDialog(this,
-                        "❌ No user was deleted. User may not exist.",
+                        "No user was deleted. User may not exist.",
                         "Delete Failed",
                         javax.swing.JOptionPane.WARNING_MESSAGE);
             }
@@ -689,7 +689,7 @@ public class ManageUsers extends javax.swing.JPanel {
         } catch (Exception e) {
             e.printStackTrace();
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "❌ Error deleting user: " + e.getMessage(),
+                    "Error deleting user: " + e.getMessage(),
                     "Database Error",
                     javax.swing.JOptionPane.ERROR_MESSAGE);
         }
