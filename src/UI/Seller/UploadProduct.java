@@ -34,15 +34,17 @@ public class UploadProduct extends javax.swing.JPanel {
 
     MainJFrame mainpage;
     String roleId = null;
+    String userId = null;
 
     /**
      * Creates new form SellerDashboard
      */
-    public UploadProduct(MainJFrame mainpage, String roleId) {
+    public UploadProduct(MainJFrame mainpage, String roleId, String userId) {
         initComponents();
         populateCategories();
         this.mainpage = mainpage;
         this.roleId = roleId;
+        this.userId = userId;
 //Panel Styling
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(232, 245, 253));
@@ -371,7 +373,7 @@ public class UploadProduct extends javax.swing.JPanel {
         pr.setProductName(txtProdName.getText());
         pr.setDescription(txtProdDesc.getText());
         pr.setCategory((String) CategoryList.getSelectedItem());
-        pr.setSellerId(roleId);
+        pr.setSellerId(userId);
         pr.setCertifierId(null);
         pr.setShippingProviderId("null");
         pr.setMaterialsUsed(txtMaterial.getText());

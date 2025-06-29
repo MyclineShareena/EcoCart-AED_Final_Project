@@ -216,7 +216,7 @@ public class SellerSplitPage extends javax.swing.JPanel {
 
     private void btnUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUploadActionPerformed
         // TODO add your handling code here:
-        UploadProduct up = new UploadProduct(mainpage, mainpage.roleId);
+        UploadProduct up = new UploadProduct(mainpage, mainpage.roleId, mainpage.userId);
         SplitPane.setRightComponent(up);
 
     }//GEN-LAST:event_btnUploadActionPerformed
