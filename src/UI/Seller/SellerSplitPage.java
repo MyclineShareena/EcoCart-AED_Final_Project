@@ -223,7 +223,7 @@ public class SellerSplitPage extends javax.swing.JPanel {
 
     private void btnViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewActionPerformed
         // TODO add your handling code here:
-        ViewProduct vp = new ViewProduct(mainpage, mainpage.roleId);
+        ViewProduct vp = new ViewProduct(mainpage, mainpage.roleId, mainpage.userId);
         SplitPane.setRightComponent(vp);
     }//GEN-LAST:event_btnViewActionPerformed
 

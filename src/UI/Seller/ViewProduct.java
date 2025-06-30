@@ -39,14 +39,16 @@ public class ViewProduct extends javax.swing.JPanel {
 
     MainJFrame mainpage;
     String roleId;
+    String userId;
 
     /**
      * Creates new form ViewProduct
      */
-    public ViewProduct(MainJFrame mainpage, String roleId) {
+    public ViewProduct(MainJFrame mainpage, String roleId, String userId) {
         initComponents();
         this.mainpage = mainpage;
         this.roleId = roleId;
+        this.userId = userId;
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(232, 245, 253)); // Light blue background
 
@@ -156,13 +158,13 @@ public class ViewProduct extends javax.swing.JPanel {
             MongoCollection<Document> productCollection = db.getCollection("products");
 
             // Query only products uploaded by the current seller
-            Document query = new Document("seller_id", roleId);
+            Document query = new Document("seller_id", userId);
             FindIterable<Document> products = productCollection.find(query);
 
             for (Document doc : products) {
                 boolean isAudit = doc.getBoolean("is_audit", false);
                 //int ecoScore = doc.get("ecoscore", 0);
-                String auditButtonLabel = !isAudit  ? "Submit for Audit" : "Submitted";
+                String auditButtonLabel = !isAudit ? "Submit for Audit" : "Submitted";
                 Object[] row = new Object[]{
                     doc.getString("product_id"),
                     doc.getString("product_name"),
@@ -184,7 +186,7 @@ public class ViewProduct extends javax.swing.JPanel {
 
             viewEditTbl.getColumnModel().getColumn(8).setCellRenderer(new ButtonRenderer());
             viewEditTbl.getColumnModel().getColumn(8).setCellEditor(new AuditButtonEditor(new JCheckBox(), viewEditTbl, this));
-            
+
         }
     }
 

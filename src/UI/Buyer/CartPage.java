@@ -384,9 +384,9 @@ public class CartPage extends javax.swing.JPanel {
         }
         double average = (double) totalEcoScore / itemCount;
 
-        if (average >= 8.0) {
+        if (average >= 7.0) {
             return "Good";
-        } else if (average >= 5.0) {
+        } else if (average < 7 && average > 3.0) {
             return "Moderate";
         } else {
             return "Bad";

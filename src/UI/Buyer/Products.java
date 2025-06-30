@@ -58,13 +58,16 @@ public class Products extends javax.swing.JPanel {
 
     MainJFrame mainpage;
     String userId;
+    private boolean isInitializing = true; // Add flag to prevent ComboBox events during initialization
 
     /**
      * Creates new form Products
      */
     public Products(MainJFrame mainpage, String userId) {
-        this.userId = userId;
         this.mainpage = mainpage;
+        this.userId = userId;
+        this.isInitializing = true; // Set flag
+
         setLayout(new BorderLayout(10, 10));
         setBackground(new Color(232, 245, 233));
 
@@ -138,6 +141,24 @@ public class Products extends javax.swing.JPanel {
         setupTableStyle(jTable1);
         populateTable();
         populateSupplierComboBox();
+
+        this.isInitializing = false; // Clear flag after initialization
+    }
+
+    // Helper methods for null-safe data retrieval
+    private double getSafeDouble(Document doc, String fieldName) {
+        Double value = doc.getDouble(fieldName);
+        return (value != null) ? value : 0.0;
+    }
+
+    private int getSafeInteger(Document doc, String fieldName) {
+        Integer value = doc.getInteger(fieldName);
+        return (value != null) ? value : 0;
+    }
+
+    private String getSafeString(Document doc, String fieldName) {
+        String value = doc.getString(fieldName);
+        return (value != null) ? value : "";
     }
 
     private void setupTableStyle(JTable table) {
@@ -309,310 +330,342 @@ public class Products extends javax.swing.JPanel {
     }//GEN-LAST:event_BackBTNActionPerformed
 
     private void btnSearchProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchProductActionPerformed
-        String searchTerm = txtSearch.getText().trim().toLowerCase();
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0); // Clear existing rows
+       try {
+            String searchTerm = txtSearch.getText().trim().toLowerCase();
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.setRowCount(0); // Clear existing rows
 
-        MongoDatabase db = MongoDBConnection.getDatabase();
-        MongoCollection<Document> productCollection = db.getCollection("products");
-        MongoCollection<Document> userCollection = db.getCollection("users");
+            MongoDatabase db = MongoDBConnection.getDatabase();
+            MongoCollection<Document> productCollection = db.getCollection("products");
+            MongoCollection<Document> userCollection = db.getCollection("users");
 
-        // Step 1: Get all audited products that match the search
-        List<Document> products = new ArrayList<>();
-        for (Document doc : productCollection.find(Filters.eq("is_audit", true))) {
-            String productName = doc.getString("product_name");
-            if (productName != null && productName.toLowerCase().contains(searchTerm)) {
-                products.add(doc);
+            // Step 1: Get all audited products that match the search
+            List<Document> products = new ArrayList<>();
+            for (Document doc : productCollection.find(Filters.eq("is_audit", true))) {
+                String productName = getSafeString(doc, "product_name");
+                if (!productName.isEmpty() && productName.toLowerCase().contains(searchTerm)) {
+                    products.add(doc);
+                }
             }
-        }
 
-        // Step 2: Group by category
-        Map<String, List<Document>> groupedByCategory = products.stream()
-                .collect(Collectors.groupingBy(doc -> {
-                    String cat = doc.getString("category");
-                    return cat != null ? cat : "Unknown";
-                }));
+            // Step 2: Group by category
+            Map<String, List<Document>> groupedByCategory = products.stream()
+                    .collect(Collectors.groupingBy(doc -> {
+                        String cat = getSafeString(doc, "category");
+                        return !cat.isEmpty() ? cat : "Unknown";
+                    }));
 
-        List<Document> finalSorted = new ArrayList<>();
+            List<Document> finalSorted = new ArrayList<>();
 
-        // Step 3: Sort each group and accumulate
-        groupedByCategory.keySet().stream().sorted().forEach(category -> {
-            List<Document> group = groupedByCategory.get(category);
+            // Step 3: Sort each group and accumulate
+            groupedByCategory.keySet().stream().sorted().forEach(category -> {
+                List<Document> group = groupedByCategory.get(category);
 
-            List<Document> approved = group.stream()
-                    .filter(p -> Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
-                    .sorted((d1, d2) -> {
-                        Double b1 = d1.getDouble("bid_amount");
-                        Double b2 = d2.getDouble("bid_amount");
+                List<Document> approved = group.stream()
+                        .filter(p -> Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                        .sorted((d1, d2) -> {
+                            double val1 = getSafeDouble(d1, "bid_amount");
+                            double val2 = getSafeDouble(d2, "bid_amount");
+                            return Double.compare(val2, val1); // Descending
+                        })
+                        .collect(Collectors.toList());
 
-                        double val1 = (b1 != null) ? b1 : 0.0;
-                        double val2 = (b2 != null) ? b2 : 0.0;
+                List<Document> unapproved = group.stream()
+                        .filter(p -> !Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                        .sorted((d1, d2) -> {
+                            String name1 = getSafeString(d1, "product_name");
+                            String name2 = getSafeString(d2, "product_name");
+                            return name1.compareToIgnoreCase(name2);
+                        })
+                        .collect(Collectors.toList());
 
-                        return Double.compare(val2, val1); // Descending
-                    })
-                    .collect(Collectors.toList());
-
-            List<Document> unapproved = group.stream()
-                    .filter(p -> !Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
-                    .sorted((d1, d2) -> {
-                        String name1 = d1.getString("product_name");
-                        String name2 = d2.getString("product_name");
-                        return name1.compareToIgnoreCase(name2);
-                    })
-                    .collect(Collectors.toList());
-
-            approved.addAll(unapproved);
-            finalSorted.addAll(approved);
-        });
-
-        // Step 4: Populate the table
-        for (Document doc : finalSorted) {
-            String productId = doc.getString("product_id");
-            String productName = doc.getString("product_name");
-            String category = doc.getString("category");
-            double price = doc.getDouble("price");
-            int ecoScore = doc.getInteger("ecoscore", 0);
-            String sellerId = doc.getString("seller_id");
-
-            Document seller = userCollection.find(new Document("user_id", sellerId)).first();
-            String sellerName = (seller != null) ? seller.getString("name") : "Unknown";
-
-            model.addRow(new Object[]{
-                productId, // This will be hidden from view, but available internally
-                productName,
-                category,
-                price,
-                ecoScore,
-                sellerName,
-                "Add to Cart"
+                approved.addAll(unapproved);
+                finalSorted.addAll(approved);
             });
+
+            // Step 4: Populate the table
+            for (Document doc : finalSorted) {
+                String productId = getSafeString(doc, "product_id");
+                String productName = getSafeString(doc, "product_name");
+                String category = getSafeString(doc, "category");
+                double price = getSafeDouble(doc, "price");
+                int ecoScore = getSafeInteger(doc, "ecoscore");
+                String sellerId = getSafeString(doc, "seller_id");
+
+                Document seller = userCollection.find(new Document("user_id", sellerId)).first();
+                String sellerName = (seller != null) ? getSafeString(seller, "name") : "Unknown";
+                if (sellerName.isEmpty()) sellerName = "Unknown";
+
+                model.addRow(new Object[]{
+                    productId,
+                    productName,
+                    category.isEmpty() ? "Unknown" : category,
+                    price,
+                    ecoScore,
+                    sellerName,
+                    "Add to Cart"
+                });
+            }
+
+            // Step 5: Set up Add to Cart column
+            if (jTable1.getColumnCount() > 6) {
+                TableColumn cartColumn = jTable1.getColumn("Add to Cart");
+                cartColumn.setCellRenderer(new ButtonRenderer());
+                cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1, userId));
+
+                // Step 6: Hide Product ID column visually, but preserve the data
+                TableColumn idCol = jTable1.getColumnModel().getColumn(0);
+                idCol.setMinWidth(0);
+                idCol.setMaxWidth(0);
+                idCol.setPreferredWidth(0);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Error searching products: " + e.getMessage(), 
+                "Database Error", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
         }
-
-        // Step 5: Set up Add to Cart column
-        TableColumn cartColumn = jTable1.getColumn("Add to Cart");
-        cartColumn.setCellRenderer(new ButtonRenderer());
-        cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1, userId));
-
-        // Step 6: Hide Product ID column visually, but preserve the data
-        TableColumn idCol = jTable1.getColumnModel().getColumn(0);
-        idCol.setMinWidth(0);
-        idCol.setMaxWidth(0);
-        idCol.setPreferredWidth(0);
-
+    
     }//GEN-LAST:event_btnSearchProductActionPerformed
 
     private void cmbSupplierActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbSupplierActionPerformed
         // TODO add your handling code here:
-        String selectedSeller = cmbSupplier.getSelectedItem().toString();
+        if (isInitializing || cmbSupplier.getSelectedItem() == null) {
+            return;
+        }
+        
+        try {
+            String selectedSeller = cmbSupplier.getSelectedItem().toString();
 
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0); // Clear table
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.setRowCount(0); // Clear table
 
-        MongoDatabase db = MongoDBConnection.getDatabase();
-        MongoCollection<Document> productCollection = db.getCollection("products");
-        MongoCollection<Document> userCollection = db.getCollection("users");
+            MongoDatabase db = MongoDBConnection.getDatabase();
+            MongoCollection<Document> productCollection = db.getCollection("products");
+            MongoCollection<Document> userCollection = db.getCollection("users");
 
-        List<Document> products = new ArrayList<>();
+            List<Document> products = new ArrayList<>();
 
-        // Step 1: Filter by is_audit and selected seller
-        for (Document product : productCollection.find(Filters.eq("is_audit", true))) {
-            String sellerId = product.getString("seller_id");
-            Document seller = userCollection.find(new Document("user_id", sellerId)).first();
-            String sellerName = (seller != null) ? seller.getString("name") : "Unknown";
+            // Step 1: Filter by is_audit and selected seller
+            for (Document product : productCollection.find(Filters.eq("is_audit", true))) {
+                String sellerId = getSafeString(product, "seller_id");
+                Document seller = userCollection.find(new Document("user_id", sellerId)).first();
+                String sellerName = (seller != null) ? getSafeString(seller, "name") : "Unknown";
+                if (sellerName.isEmpty()) sellerName = "Unknown";
 
-            if (selectedSeller.equals("All Suppliers") || sellerName.equals(selectedSeller)) {
-                product.append("resolved_seller_name", sellerName); // temporarily store it for later
-                products.add(product);
+                if (selectedSeller.equals("All Suppliers") || sellerName.equals(selectedSeller)) {
+                    product.append("resolved_seller_name", sellerName);
+                    products.add(product);
+                }
             }
-        }
 
-        // Step 2: Group by category
-        Map<String, List<Document>> groupedByCategory = products.stream()
-                .collect(Collectors.groupingBy(doc -> {
-                    String cat = doc.getString("category");
-                    return cat != null ? cat : "Unknown";
-                }));
+            // Step 2: Group by category
+            Map<String, List<Document>> groupedByCategory = products.stream()
+                    .collect(Collectors.groupingBy(doc -> {
+                        String cat = getSafeString(doc, "category");
+                        return !cat.isEmpty() ? cat : "Unknown";
+                    }));
 
-        List<Document> finalSorted = new ArrayList<>();
+            List<Document> finalSorted = new ArrayList<>();
 
-        // Step 3: Sort within each category
-        groupedByCategory.keySet().stream().sorted().forEach(category -> {
-            List<Document> group = groupedByCategory.get(category);
+            // Step 3: Sort within each category
+            groupedByCategory.keySet().stream().sorted().forEach(category -> {
+                List<Document> group = groupedByCategory.get(category);
 
-            List<Document> approved = group.stream()
-                    .filter(p -> Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
-                    .sorted((d1, d2) -> {
-                        Double b1 = d1.getDouble("bid_amount");
-                        Double b2 = d2.getDouble("bid_amount");
+                List<Document> approved = group.stream()
+                        .filter(p -> Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                        .sorted((d1, d2) -> {
+                            double val1 = getSafeDouble(d1, "bid_amount");
+                            double val2 = getSafeDouble(d2, "bid_amount");
+                            return Double.compare(val2, val1); // Descending
+                        })
+                        .collect(Collectors.toList());
 
-                        double val1 = (b1 != null) ? b1 : 0.0;
-                        double val2 = (b2 != null) ? b2 : 0.0;
+                List<Document> unapproved = group.stream()
+                        .filter(p -> !Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                        .sorted((d1, d2) -> {
+                            String name1 = getSafeString(d1, "product_name");
+                            String name2 = getSafeString(d2, "product_name");
+                            return name1.compareToIgnoreCase(name2);
+                        }).collect(Collectors.toList());
 
-                        return Double.compare(val2, val1); // Descending
-                    })
-                    .collect(Collectors.toList());
-
-            List<Document> unapproved = group.stream()
-                    .filter(p -> !Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
-                    .sorted((d1, d2) -> {
-                        String name1 = d1.getString("product_name");
-                        String name2 = d2.getString("product_name");
-                        return name1.compareToIgnoreCase(name2);
-                    }).collect(Collectors.toList());
-
-            approved.addAll(unapproved);
-            finalSorted.addAll(approved);
-        });
-
-        // Step 4: Populate table
-        for (Document doc : finalSorted) {
-            String productId = doc.getString("product_id");
-            String productName = doc.getString("product_name");
-            String category = doc.getString("category");
-            double price = doc.getDouble("price");
-            int ecoScore = doc.getInteger("ecoscore", 0);
-            String sellerName = doc.getString("resolved_seller_name");
-
-            model.addRow(new Object[]{
-                productId,
-                productName,
-                category,
-                price,
-                ecoScore,
-                sellerName,
-                "Add to Cart"
+                approved.addAll(unapproved);
+                finalSorted.addAll(approved);
             });
+
+            // Step 4: Populate table
+            for (Document doc : finalSorted) {
+                String productId = getSafeString(doc, "product_id");
+                String productName = getSafeString(doc, "product_name");
+                String category = getSafeString(doc, "category");
+                double price = getSafeDouble(doc, "price");
+                int ecoScore = getSafeInteger(doc, "ecoscore");
+                String sellerName = getSafeString(doc, "resolved_seller_name");
+
+                model.addRow(new Object[]{
+                    productId,
+                    productName,
+                    category.isEmpty() ? "Unknown" : category,
+                    price,
+                    ecoScore,
+                    sellerName.isEmpty() ? "Unknown" : sellerName,
+                    "Add to Cart"
+                });
+            }
+
+            // Step 5: Restore renderer and editor
+            if (jTable1.getColumnCount() > 6) {
+                TableColumn cartColumn = jTable1.getColumn("Add to Cart");
+                cartColumn.setCellRenderer(new ButtonRenderer());
+                cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1, userId));
+
+                // Hide product ID column visually
+                TableColumn idCol = jTable1.getColumnModel().getColumn(0);
+                idCol.setMinWidth(0);
+                idCol.setMaxWidth(0);
+                idCol.setPreferredWidth(0);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Error filtering products: " + e.getMessage(), 
+                "Database Error", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
         }
-
-        // Step 5: Restore renderer and editor
-        TableColumn cartColumn = jTable1.getColumn("Add to Cart");
-        cartColumn.setCellRenderer(new ButtonRenderer());
-        cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1, userId));
-
-        // Hide product ID column visually
-        TableColumn idCol = jTable1.getColumnModel().getColumn(0);
-        idCol.setMinWidth(0);
-        idCol.setMaxWidth(0);
-        idCol.setPreferredWidth(0);
     }//GEN-LAST:event_cmbSupplierActionPerformed
 
     private void populateSupplierComboBox() {
-        cmbSupplier.removeAllItems();
-        cmbSupplier.addItem("All Suppliers"); // default option
+        try {
+            cmbSupplier.removeAllItems();
+            cmbSupplier.addItem("All Suppliers"); // default option
 
-        MongoDatabase db = MongoDBConnection.getDatabase();
-        MongoCollection<Document> productCollection = db.getCollection("products");
-        MongoCollection<Document> userCollection = db.getCollection("users");
+            MongoDatabase db = MongoDBConnection.getDatabase();
+            MongoCollection<Document> productCollection = db.getCollection("products");
+            MongoCollection<Document> userCollection = db.getCollection("users");
 
-        Set<String> sellerNames = new HashSet<>();
+            Set<String> sellerNames = new HashSet<>();
 
-        for (Document product : productCollection.find(new Document("is_audit", true))) {
-            String sellerId = product.getString("seller_id");
+            for (Document product : productCollection.find(new Document("is_audit", true))) {
+                String sellerId = getSafeString(product, "seller_id");
 
-            if (sellerId != null) {
-                Document seller = userCollection.find(new Document("user_id", sellerId)).first();
-                if (seller != null) {
-                    String sellerName = seller.getString("name");
-                    if (sellerName != null && !sellerNames.contains(sellerName)) {
-                        sellerNames.add(sellerName);
-                        cmbSupplier.addItem(sellerName);
+                if (!sellerId.isEmpty()) {
+                    Document seller = userCollection.find(new Document("user_id", sellerId)).first();
+                    if (seller != null) {
+                        String sellerName = getSafeString(seller, "name");
+                        if (!sellerName.isEmpty() && !sellerNames.contains(sellerName)) {
+                            sellerNames.add(sellerName);
+                            cmbSupplier.addItem(sellerName);
+                        }
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error populating supplier combo box: " + e.getMessage());
         }
     }
 
     public void populateTable() {
-        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
-        model.setRowCount(0); // Clear existing rows
+        try {
+            DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+            model.setRowCount(0); // Clear existing rows
 
-        MongoDatabase db = MongoDBConnection.getDatabase();
-        MongoCollection<Document> productCollection = db.getCollection("products");
-        MongoCollection<Document> userCollection = db.getCollection("users");
+            MongoDatabase db = MongoDBConnection.getDatabase();
+            MongoCollection<Document> productCollection = db.getCollection("products");
+            MongoCollection<Document> userCollection = db.getCollection("users");
 
-        // Step 1: Get all audited products that match the search
-        List<Document> products = new ArrayList<>();
-        for (Document doc : productCollection.find(Filters.eq("is_audit", true))) {
-            String productName = doc.getString("product_name");
-            if (productName != null) {
-                products.add(doc);
+            // Step 1: Get all audited products
+            List<Document> products = new ArrayList<>();
+            for (Document doc : productCollection.find(Filters.eq("is_audit", true))) {
+                String productName = getSafeString(doc, "product_name");
+                if (!productName.isEmpty()) {
+                    products.add(doc);
+                }
             }
-        }
 
-        // Step 2: Group by category
-        Map<String, List<Document>> groupedByCategory = products.stream()
-                .collect(Collectors.groupingBy(doc -> {
-                    String cat = doc.getString("category");
-                    return cat != null ? cat : "Unknown";
-                }));
+            // Step 2: Group by category
+            Map<String, List<Document>> groupedByCategory = products.stream()
+                    .collect(Collectors.groupingBy(doc -> {
+                        String cat = getSafeString(doc, "category");
+                        return !cat.isEmpty() ? cat : "Unknown";
+                    }));
 
-        List<Document> finalSorted = new ArrayList<>();
+            List<Document> finalSorted = new ArrayList<>();
 
-        // Step 3: Sort each group and accumulate
-        groupedByCategory.keySet().stream().sorted().forEach(category -> {
-            List<Document> group = groupedByCategory.get(category);
+            // Step 3: Sort each group and accumulate
+            groupedByCategory.keySet().stream().sorted().forEach(category -> {
+                List<Document> group = groupedByCategory.get(category);
 
-            List<Document> approved = group.stream()
-                    .filter(p -> Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
-                    .sorted((d1, d2) -> {
-                        Double b1 = d1.getDouble("bid_amount");
-                        Double b2 = d2.getDouble("bid_amount");
+                List<Document> approved = group.stream()
+                        .filter(p -> Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                        .sorted((d1, d2) -> {
+                            double val1 = getSafeDouble(d1, "bid_amount");
+                            double val2 = getSafeDouble(d2, "bid_amount");
+                            return Double.compare(val2, val1); // Descending
+                        })
+                        .collect(Collectors.toList());
 
-                        double val1 = (b1 != null) ? b1 : 0.0;
-                        double val2 = (b2 != null) ? b2 : 0.0;
+                List<Document> unapproved = group.stream()
+                        .filter(p -> !Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
+                        .sorted((d1, d2) -> {
+                            String name1 = getSafeString(d1, "product_name");
+                            String name2 = getSafeString(d2, "product_name");
+                            return name1.compareToIgnoreCase(name2);
+                        })
+                        .collect(Collectors.toList());
 
-                        return Double.compare(val2, val1); // Descending
-                    })
-                    .collect(Collectors.toList());
-
-            List<Document> unapproved = group.stream()
-                    .filter(p -> !Boolean.TRUE.equals(p.getBoolean("is_bid_approved")))
-                    .sorted((d1, d2) -> {
-                        String name1 = d1.getString("product_name");
-                        String name2 = d2.getString("product_name");
-                        return name1.compareToIgnoreCase(name2);
-                    })
-                    .collect(Collectors.toList());
-
-            approved.addAll(unapproved);
-            finalSorted.addAll(approved);
-        });
-
-        // Step 4: Populate the table
-        for (Document doc : finalSorted) {
-            String productId = doc.getString("product_id");
-            String productName = doc.getString("product_name");
-            String category = doc.getString("category");
-            double price = doc.getDouble("price");
-            int ecoScore = doc.getInteger("ecoscore", 0);
-            String sellerId = doc.getString("seller_id");
-
-            Document seller = userCollection.find(new Document("user_id", sellerId)).first();
-            String sellerName = (seller != null) ? seller.getString("name") : "Unknown";
-
-            model.addRow(new Object[]{
-                productId, // This will be hidden from view, but available internally
-                productName,
-                category,
-                price,
-                ecoScore,
-                sellerName,
-                "Add to Cart"
+                approved.addAll(unapproved);
+                finalSorted.addAll(approved);
             });
+
+            // Step 4: Populate the table
+            for (Document doc : finalSorted) {
+                String productId = getSafeString(doc, "product_id");
+                String productName = getSafeString(doc, "product_name");
+                String category = getSafeString(doc, "category");
+                double price = getSafeDouble(doc, "price");
+                int ecoScore = getSafeInteger(doc, "ecoscore");
+                String sellerId = getSafeString(doc, "seller_id");
+
+                Document seller = userCollection.find(new Document("user_id", sellerId)).first();
+                String sellerName = (seller != null) ? getSafeString(seller, "name") : "Unknown";
+                if (sellerName.isEmpty()) sellerName = "Unknown";
+
+                model.addRow(new Object[]{
+                    productId,
+                    productName,
+                    category.isEmpty() ? "Unknown" : category,
+                    price,
+                    ecoScore,
+                    sellerName,
+                    "Add to Cart"
+                });
+            }
+
+            // Step 5: Set up Add to Cart column
+            if (jTable1.getColumnCount() > 6) {
+                TableColumn cartColumn = jTable1.getColumn("Add to Cart");
+                cartColumn.setCellRenderer(new ButtonRenderer());
+                cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1, userId));
+
+                // Step 6: Hide Product ID column visually, but preserve the data
+                TableColumn idCol = jTable1.getColumnModel().getColumn(0);
+                idCol.setMinWidth(0);
+                idCol.setMaxWidth(0);
+                idCol.setPreferredWidth(0);
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Error loading products: " + e.getMessage(), 
+                "Database Error", 
+                javax.swing.JOptionPane.ERROR_MESSAGE);
         }
-
-        // Step 5: Set up Add to Cart column
-        TableColumn cartColumn = jTable1.getColumn("Add to Cart");
-        cartColumn.setCellRenderer(new ButtonRenderer());
-        cartColumn.setCellEditor(new CartButtonEditor(new JCheckBox(), jTable1, userId));
-
-        // Step 6: Hide Product ID column visually, but preserve the data
-        TableColumn idCol = jTable1.getColumnModel().getColumn(0);
-        idCol.setMinWidth(0);
-        idCol.setMaxWidth(0);
-        idCol.setPreferredWidth(0);
     }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BackBTN;

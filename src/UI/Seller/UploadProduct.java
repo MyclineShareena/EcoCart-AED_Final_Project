@@ -446,8 +446,8 @@ public class UploadProduct extends javax.swing.JPanel {
 
         // You can fetch these from a database or keep them static
         String[] categories = {
-            "Select Category", "Phone", "Computer", "Furniture", "Appliances",
-            "Clothing", "Books", "Toys", "Kitchenware"
+            "Select Category", "Phone", "Computer", "Home & Kitchen", "Appliances",
+            "Clothing", "Books", "Beauty & Personal Care", "Accessories"
         };
 
         for (String category : categories) {
