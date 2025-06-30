@@ -121,7 +121,7 @@ public class CartPage extends javax.swing.JPanel {
         BtnDelete.setFocusPainted(false);
         BtnDelete.setBorder(BorderFactory.createEmptyBorder(5, 15, 5, 15));
 
-        btnCheckOut.setText("✅ Check Out");
+        btnCheckOut.setText("Check Out");
         btnCheckOut.setBackground(new Color(56, 142, 60));
         btnCheckOut.setForeground(Color.WHITE);
         btnCheckOut.setFocusPainted(false);

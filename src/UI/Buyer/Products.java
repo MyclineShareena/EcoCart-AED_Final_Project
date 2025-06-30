@@ -164,7 +164,7 @@ public class Products extends javax.swing.JPanel {
     private void setupTableStyle(JTable table) {
         table.setModel(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"Product ID", "Product Name", "Category", "Price", "Eco Score", "Seller Name", "Add to Cart"}
+                new String[]{"Product ID", "Product Name", "Category", "Price($)", "Eco Score", "Seller Name", "Add to Cart"}
         ) {
             public boolean isCellEditable(int row, int column) {
                 return column == 6;

@@ -102,7 +102,7 @@ public class UploadProduct extends javax.swing.JPanel {
         int row = 0;
 
         String[] labels = {
-            "Product Name", "Product Description", "Category", "Price",
+            "Product Name", "Product Description", "Category", "Price($)",
             "Material Used", "Production Emission (CO2 in KG)", "Manufacturing Location"
         };
 

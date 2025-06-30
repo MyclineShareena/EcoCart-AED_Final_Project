@@ -38,7 +38,7 @@ public class SchemaCreator {
                     .append("enterprise_name", "Supplier / Manufacturer");
 
             enterpriseCollection.insertMany(Arrays.asList(ecomEnterprise, certEnterprise, shippingEnterprise, supplierEnterprise));
-            System.out.println("✅ Enterprises inserted");
+            System.out.println(" Enterprises inserted");
 
             // Insert Organizations
             MongoCollection<Document> organizationCollection = db.getCollection("organizations");
@@ -64,7 +64,7 @@ public class SchemaCreator {
                     .append("enterprise_id", "E004");
 
             organizationCollection.insertMany(Arrays.asList(sellerMgmtUnit, customerSupportUnit, certReviewDept, shippingUnit, productMgmtUnit));
-            System.out.println("✅ Organizations inserted");
+            System.out.println(" Organizations inserted");
 
             // Insert Roles
             MongoCollection<Document> roleCollection = db.getCollection("roles");
@@ -102,7 +102,7 @@ public class SchemaCreator {
                     buyerUser, sellerUser, supportUser, auditorUser, complianceUser,
                     shippingCoordUser, carbonTrackerUser, supplierAdminUser, materialTrackerUser
             ));
-            System.out.println("✅ Users inserted");
+            System.out.println(" Users inserted");
 
             // Insert Products
             MongoCollection<Document> productCollection = db.getCollection("products");
@@ -124,12 +124,12 @@ public class SchemaCreator {
                     .append("ecoscore", 90);
 
             productCollection.insertMany(Arrays.asList(product1, product2));
-            System.out.println("✅ Products inserted");
+            System.out.println(" Products inserted");
 
-            System.out.println("🎯 All dummy data inserted successfully!");
+            System.out.println(" All dummy data inserted successfully!");
 
         } else {
-            System.out.println("❌ Database connection failed!");
+            System.out.println(" Database connection failed!");
         }
     }
 }

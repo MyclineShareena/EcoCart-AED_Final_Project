@@ -64,7 +64,7 @@ public class ButtonEditor extends DefaultCellEditor {
                 try {
                     carbonScore = Integer.parseInt(String.valueOf(table.getValueAt(selectedRow, 5))); // Fixed
                 } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(button, "❗ CO2 Emission must be a valid integer.");
+                    JOptionPane.showMessageDialog(button, "CO2 Emission must be a valid integer.");
                     return label;
                 }
 
@@ -81,7 +81,7 @@ public class ButtonEditor extends DefaultCellEditor {
                         new Document("$set", updateFields)
                 );
 
-                JOptionPane.showMessageDialog(button, "✅ Product updated successfully!");
+                JOptionPane.showMessageDialog(button, "Product updated successfully!");
 
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(button, "Error updating product: " + ex.getMessage());

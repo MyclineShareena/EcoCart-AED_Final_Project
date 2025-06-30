@@ -44,9 +44,6 @@ public class SupportPage extends javax.swing.JPanel {
     String userId;
     private String[] statusOptions = {"Open", "In Progress", "Resolved", "Closed"};
 
-    /**
-     * Creates new form Customersupport
-     */
     public SupportPage(MainJFrame mainpage, String userId) {
         initComponents();
         this.userId = userId;
@@ -324,7 +321,7 @@ public class SupportPage extends javax.swing.JPanel {
 
             if (modifiedCount > 0) {
                 javax.swing.JOptionPane.showMessageDialog(this,
-                        "✅ Order status updated successfully!\n"
+                        "Order status updated successfully!\n"
                         + "Order ID: " + orderId + "\n"
                         + "New Status: " + newStatus,
                         "Update Successful",
@@ -334,7 +331,7 @@ public class SupportPage extends javax.swing.JPanel {
                 populateTable();
             } else {
                 javax.swing.JOptionPane.showMessageDialog(this,
-                        "❌ No records were updated. Please check if the order exists.",
+                        "No records were updated. Please check if the order exists.",
                         "Update Failed",
                         javax.swing.JOptionPane.WARNING_MESSAGE);
             }
@@ -342,7 +339,7 @@ public class SupportPage extends javax.swing.JPanel {
         } catch (Exception e) {
             e.printStackTrace();
             javax.swing.JOptionPane.showMessageDialog(this,
-                    "❌ Error updating order status: " + e.getMessage(),
+                    "Error updating order status: " + e.getMessage(),
                     "Database Error",
                     javax.swing.JOptionPane.ERROR_MESSAGE);
         }

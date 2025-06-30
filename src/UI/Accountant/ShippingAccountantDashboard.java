@@ -102,7 +102,7 @@ public class ShippingAccountantDashboard extends javax.swing.JPanel {
         // Table 1
         jTable1 = new JTable(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"Order ID", "Seller ID", "From", "To", "Parcel Size", "Parcel Weight", "Distance", "Invoice Amount", "Status"}
+                new String[]{"Order ID", "Seller ID", "From", "To", "Parcel Size", "Parcel Weight(lb)", "Distance(miles)", "Invoice Amount($)", "Status"}
         ));
         styleTable(jTable1);
         JScrollPane scrollPane1 = new JScrollPane(jTable1);
@@ -127,7 +127,7 @@ public class ShippingAccountantDashboard extends javax.swing.JPanel {
         // Table 2
         jTable2 = new JTable(new DefaultTableModel(
                 new Object[][]{},
-                new String[]{"Order ID", "Seller ID", "From", "To", "Parcel Size", "Parcel Weight", "Distance", "Invoice Amount", "Status"}
+                new String[]{"Order ID", "Seller ID", "From", "To","Parcel Size", "Parcel Weight(lb)", "Distance(miles)", "Invoice Amount($)", "Status"}
         ));
         styleTable(jTable2);
         JScrollPane scrollPane2 = new JScrollPane(jTable2);

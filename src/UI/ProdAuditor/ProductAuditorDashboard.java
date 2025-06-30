@@ -77,7 +77,7 @@ public class ProductAuditorDashboard extends javax.swing.JPanel {
 
         // === Table ===
         viewEditTbl = new JTable(new DefaultTableModel(new Object[][]{}, new String[]{
-            "Seller ID", "Product Name", "Description", "Category", "Bid Amount"
+            "Seller ID", "Product Name", "Description", "Category", "Bid Amount($)"
         }));
         styleTable(viewEditTbl);
 
@@ -283,7 +283,7 @@ public class ProductAuditorDashboard extends javax.swing.JPanel {
         Document update = new Document("$set", new Document("bid_status", "Rejected").append("is_promoted", false));
 
         productCollection.updateOne(filter, update);
-        javax.swing.JOptionPane.showMessageDialog(this, "❌ Bid rejected for product: " + productName);
+        javax.swing.JOptionPane.showMessageDialog(this, "Bid rejected for product: " + productName);
         populateBidTable();
     }//GEN-LAST:event_btnRejectActionPerformed
 
@@ -302,7 +302,7 @@ public class ProductAuditorDashboard extends javax.swing.JPanel {
         Document update = new Document("$set", new Document("bid_status", "Approved").append("is_promoted", true).append("is_bid_approved", true));
 
         productCollection.updateOne(filter, update);
-        javax.swing.JOptionPane.showMessageDialog(this, "✅ Bid approved for product: " + productName);
+        javax.swing.JOptionPane.showMessageDialog(this, "Bid approved for product: " + productName);
         populateBidTable();
     }//GEN-LAST:event_btnApproveActionPerformed
 

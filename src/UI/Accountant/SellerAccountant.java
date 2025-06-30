@@ -82,7 +82,7 @@ public class SellerAccountant extends javax.swing.JPanel {
         // === Table Styling ===
         jTable1 = new JTable();
         jTable1.setModel(new DefaultTableModel(new Object[][]{}, new String[]{
-            "_id", "Order Id", "Distance Travelled", "Invoice Amount", "Parcel Size", "Parcel Weight", "Payment Mode", "Status"
+            "_id", "Order Id", "Distance Travelled(miles)", "Invoice Amount($)", "Parcel Size", "Parcel Weight(lb)", "Payment Mode($)", "Status"
         }));
         styleTable(jTable1);
 
