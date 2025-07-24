@@ -58,4 +58,5 @@ Buyers can raise issues, and dedicated customer support roles manage responses.
 -- Customer Support Ticketing
 
 -- Cross-enterprise communications across all modules
-
+   <img width="959" height="515" alt="Front Page" src="https://github.com/user-attachments/assets/dc1979e6-fe90-4b43-83fa-c0d723a200c1" />
+                                           
